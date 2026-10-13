@@ -3,11 +3,34 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Green — primary accent / recommended emphasis */
+  --accent: #047857;
+  --accent-subtle: #ecfdf5;
+  --accent-subtle-hover: #d1fae5;
+  --accent-border: #a7f3d0;
+
+  /* Dark orange — secondary accent */
+  --accent-alt: #c2410c;
+  --accent-alt-subtle: #fff7ed;
+  --accent-alt-subtle-hover: #ffedd5;
+  --accent-alt-border: #fed7aa;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-accent-subtle-hover: var(--accent-subtle-hover);
+  --color-accent-border: var(--accent-border);
+
+  --color-accent-alt: var(--accent-alt);
+  --color-accent-alt-subtle: var(--accent-alt-subtle);
+  --color-accent-alt-subtle-hover: var(--accent-alt-subtle-hover);
+  --color-accent-alt-border: var(--accent-alt-border);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +39,16 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --accent: #34d399;
+    --accent-subtle: #052e23;
+    --accent-subtle-hover: #064e3b;
+    --accent-border: #065f46;
+
+    --accent-alt: #fb923c;
+    --accent-alt-subtle: #3b1a08;
+    --accent-alt-subtle-hover: #5a2a0c;
+    --accent-alt-border: #7c2d12;
   }
 }
 

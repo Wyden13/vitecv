@@ -1,5 +1,9 @@
-import PageShell from "@/components/PageShell";
+import Topbar from "@/components/Topbar";
 
 export default function DashboardPage() {
-  return <PageShell header="Dashboard" />;
+  return (
+    <div className="">
+      <Topbar header="Dashboard"/>
+    </div>
+  );
 }
