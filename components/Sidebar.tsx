@@ -1,0 +1,37 @@
+import Link from "next/link";
+import SidebarItem from "./SidebarItem";
+
+export interface NavItem {
+  label: string;
+  href: string;
+}
+
+const SIDEBAR_ITEMS: NavItem[] = [
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Cover Letter", href: "/cv" },
+  { label: "Resume Builder", href: "/resume" },
+  { label: "Insights", href: "/insights" },
+  { label: "Job Tracker", href: "/job-tracker" },
+  { label: "Job Match", href: "/job-match" },
+];
+
+export default function Sidebar() {
+  return (
+    <nav
+      aria-label="Main"
+      className="flex h-full w-48 shrink-0 flex-col border-r border-zinc-200 p-3 dark:border-zinc-800"
+    >
+      <Link
+        href="/dashboard"
+        className="mb-2 px-3 py-2 text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50"
+      >
+        viteCV
+      </Link>
+      <div className="flex flex-col gap-1">
+        {SIDEBAR_ITEMS.map((item) => (
+          <SidebarItem key={item.href} item={item} />
+        ))}
+      </div>
+    </nav>
+  );
+}
