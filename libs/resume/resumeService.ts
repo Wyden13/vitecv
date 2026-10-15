@@ -47,14 +47,19 @@ function titleFromFileName(fileName: string): string {
 
 export async function createResume(
   userId: string,
-  { fileName, rawText }: { fileName: string; rawText: string },
+  {
+    fileName,
+    rawText,
+    document,
+  }: { fileName: string; rawText: string; document?: ResumeDocument },
 ): Promise<string> {
   const created = await addDoc(resumesCollection(userId), {
     title: titleFromFileName(fileName),
     fileName,
     rawText,
-    status: "extracted" satisfies ResumeStatus,
-    document: createEmptyResumeDocument(),
+    // A structured import is ready to edit; a bare upload still needs structuring.
+    status: (document ? "editing" : "extracted") satisfies ResumeStatus,
+    document: document ?? createEmptyResumeDocument(),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
 import { extractFileText } from "@/libs/extractFile";
+import { importResumeText } from "@/libs/resume/parse/importResume";
 import { createResume } from "@/libs/resume/resumeService";
 import { UploadIcon } from "./icons";
 import { useToast } from "./Toast";
@@ -85,17 +86,24 @@ export default function ResumeUpload() {
         throw new Error("No readable text found in this file.");
       }
 
+      setStage("structuring");
+      const imported = await importResumeText(rawText);
+
       setStage("saving");
       const resumeId = await createResume(user.uid, {
         fileName: selected.name,
         rawText,
+        document: imported.document,
       });
 
       setStage("completed");
       update(id, {
         variant: "success",
-        message: "Resume processed successfully",
-        duration: 4000,
+        message:
+          imported.usedFallback || imported.leftovers > 0
+            ? "Imported — check the sections, some content is under \"Other\"."
+            : "Resume processed successfully",
+        duration: imported.usedFallback || imported.leftovers > 0 ? 6000 : 4000,
       });
 
       router.push(`/resume/${resumeId}`);
