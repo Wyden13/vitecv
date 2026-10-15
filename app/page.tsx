@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
+import { HOME_ROUTE } from "@/constants";
+
 export default function Home() {
-  return (
-    redirect("/dashboard")
-  )
+  redirect(HOME_ROUTE);
 }

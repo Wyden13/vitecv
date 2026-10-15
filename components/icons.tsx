@@ -52,3 +52,114 @@ export function LinkedInIcon({ className = "size-5", ...props }: IconProps) {
     </svg>
   );
 }
+
+export function CheckIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M20 6 9 17l-5-5" />
+    </StrokeIcon>
+  );
+}
+
+export function XIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M18 6 6 18M6 6l12 12" />
+    </StrokeIcon>
+  );
+}
+
+/** Gapped ring + `animate-spin` (built into Tailwind v4 — no keyframes needed). */
+export function SpinnerIcon({ className = "size-5", ...props }: IconProps) {
+  return (
+    <StrokeIcon className={`${className} animate-spin`} {...props}>
+      <circle cx="12" cy="12" r="9" strokeDasharray="42 14" />
+    </StrokeIcon>
+  );
+}
+
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </StrokeIcon>
+  );
+}
+
+export function GripIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <circle cx="9" cy="6" r="1" />
+      <circle cx="9" cy="12" r="1" />
+      <circle cx="9" cy="18" r="1" />
+      <circle cx="15" cy="6" r="1" />
+      <circle cx="15" cy="12" r="1" />
+      <circle cx="15" cy="18" r="1" />
+    </StrokeIcon>
+  );
+}
+
+export function DownloadIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+    </StrokeIcon>
+  );
+}
+
+export function TrashIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3" />
+    </StrokeIcon>
+  );
+}
+
+export function GoogleIcon({ className = "size-5", ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+      {...props}
+    >
+      <path
+        fill="#4285F4"
+        d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.63h6.46a5.52 5.52 0 0 1-2.4 3.62v3h3.88c2.27-2.09 3.58-5.17 3.58-8.8Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.96-1.08 7.94-2.91l-3.88-3.01c-1.08.72-2.45 1.15-4.06 1.15-3.13 0-5.78-2.11-6.73-4.95H1.26v3.1A12 12 0 0 0 12 24Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.27 14.28a7.21 7.21 0 0 1 0-4.56v-3.1H1.26a12 12 0 0 0 0 10.76l4.01-3.1Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.26 6.62l4.01 3.1C6.22 6.86 8.87 4.75 12 4.75Z"
+      />
+    </svg>
+  );
+}
+
+export function LayoutGridIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </StrokeIcon>
+  );
+}
+
+export function FileTextIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+      <path d="M14 3v5h5M9 13h6M9 17h4" />
+    </StrokeIcon>
+  );
+}

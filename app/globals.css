@@ -33,26 +33,114 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-source-serif);
 }
+
+/* ---------------------------------------------------------------------------
+   Dracula — dark theme only. Light mode above is untouched.
+
+   Dark surfaces across the app are written as hardcoded utilities
+   (`dark:bg-zinc-900`, `dark:text-zinc-400`, …) rather than the semantic
+   tokens — 89 of them. Tailwind vow  compiles those to `var(--color-zinc-*)`,
+   so re-tinting the ramp here converts every one of them at once instead of
+   editing 22 component files.
+
+   The ramp keeps its light-to-dark direction, so existing pairings like
+   `text-zinc-900 dark:text-zinc-50` still read correctly — the greys simply
+   gain Dracula's blue-violet cast. That also keeps the resume preview's
+   `text-zinc-900` dark on its white paper.
+   --------------------------------------------------------------------------- */
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-zinc-50: #f8f8f2; /* Dracula foreground */
+    --color-zinc-100: #eaeaf2;
+    --color-zinc-200: #d2d4e4;
+    --color-zinc-300: #b6bad2;
+    /* Deliberately NOT Dracula's comment colour: #6272a4 on #282a36 is
+       3.03:1, and this step carries the app's muted body text (21 uses).
+       #9ba3c7 clears 4.5:1 at 5.74:1. */
+    --color-zinc-400: #9ba3c7;
+    --color-zinc-500: #7e88b0;
+    --color-zinc-600: #6272a4; /* Dracula comment — de-emphasised use only */
+    --color-zinc-700: #4a5273;
+    --color-zinc-800: #3b3f52; /* borders */
+    --color-zinc-900: #282a36; /* Dracula background — cards, surfaces */
+    --color-zinc-950: #21222c; /* Dracula darker — page behind cards */
 
-    --accent: #34d399;
-    --accent-subtle: #052e23;
-    --accent-subtle-hover: #064e3b;
-    --accent-border: #065f46;
+    /* Errors; same trick, covering dark:text-red-400 and dark:border-red-900. */
+    --color-red-400: #ff5555; /* Dracula red */
+    --color-red-900: #5c2b2b;
 
-    --accent-alt: #fb923c;
-    --accent-alt-subtle: #3b1a08;
-    --accent-alt-subtle-hover: #5a2a0c;
-    --accent-alt-border: #7c2d12;
+    --background: #282a36;
+    --foreground: #f8f8f2;
+
+    --accent: #50fa7b; /* Dracula green */
+    --accent-subtle: #22352c;
+    --accent-subtle-hover: #2b4536;
+    --accent-border: #3e6b4f;
+
+    --accent-alt: #ffb86c; /* Dracula orange */
+    --accent-alt-subtle: #3a2e20;
+    --accent-alt-subtle-hover: #4a3a28;
+    --accent-alt-border: #6b4f33;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* ---------------------------------------------------------------------------
+   Document page
+
+   Shared by resume and cover-letter previews, which is why the name is not
+   resume-specific. The preview renders at true Letter dimensions so that what
+   is on screen is exactly what prints. `--doc-scale` shrinks it to fit the
+   preview pane; printing resets it to 1.
+
+   Padding is a variable so a full-bleed template — Modern's tinted sidebar —
+   can zero it out and supply its own insets instead.
+   --------------------------------------------------------------------------- */
+
+.doc-page {
+  width: 8.5in;
+  min-height: 11in;
+  padding: var(--page-pad-y, 0.6in) var(--page-pad-x, 0.7in);
+  box-sizing: border-box;
+  color-scheme: light;
+}
+
+.doc-page-scaler {
+  --doc-scale: 0.62;
+  width: 8.5in;
+  transform: scale(var(--doc-scale));
+  transform-origin: top center;
+  /* Reclaim the whitespace the transform leaves behind. */
+  margin-bottom: calc((1 - var(--doc-scale)) * -11in);
+}
+
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0;
+  }
+
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+    background: #fff;
+  }
+
+  .doc-page-scaler {
+    --doc-scale: 1;
+    margin-bottom: 0;
+  }
+
+  .doc-page {
+    box-shadow: none;
+  }
 }

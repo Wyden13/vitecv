@@ -4,7 +4,7 @@ export type ButtonVariant =
   | "ghost"
   | "soft"
   | "softAlt";
-export type ButtonSize = "sm" | "md";
+export type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: ButtonVariant;
@@ -34,6 +34,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
 const SIZES: Record<ButtonSize, string> = {
   sm: "px-2.5 py-1.5 text-xs",
   md: "px-3 py-2 text-sm",
+  lg: "px-4 py-2.5 text-sm",
 };
 
 export default function Button({
