@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
-import type { ResumeTemplateId } from "@/libs/resume/resumeSchema";
-import { createBlankResume } from "@/libs/resume/resumeService";
+import type { CoverLetterTemplateId } from "@/libs/coverLetterSchema";
+import { createCoverLetter } from "@/libs/coverLetterService";
+import type { ResumeTemplateId } from "@/libs/resumeSchema";
+import { createBlankResume } from "@/libs/resumeService";
 import { DEFAULT_THEME, type DocumentTheme } from "@/libs/templateTheme";
 import { useToast } from "../Toast";
 import {
@@ -58,6 +60,12 @@ export default function TemplateGallery({
           title: `${entry.name} resume`,
         });
         router.push(`/resume/${id}`);
+      } else {
+        const id = await createCoverLetter(user.uid, {
+          templateId: entry.id as CoverLetterTemplateId,
+          title: `${entry.name} cover letter`,
+        });
+        router.push(`/cv/${id}`);
       }
     } catch (caught) {
       setCreatingId(null);

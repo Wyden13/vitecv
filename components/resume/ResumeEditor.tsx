@@ -33,17 +33,13 @@ export interface ResumeEditorProps {
 
 export default function ResumeEditor({ resumeId }: ResumeEditorProps) {
   const { user, loading: authLoading } = useFirebaseUser();
-
   const [draft, setDraft] = useState<Draft | null>(null);
   const [tab, setTab] = useState<EditorTab>("editor");
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [missing, setMissing] = useState(false);
-
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Set while the user is editing, so incoming snapshots (including the echo
-  // of our own write) don't clobber in-flight keystrokes.
   const dirty = useRef(false);
 
   useEffect(() => {
@@ -121,15 +117,11 @@ export default function ResumeEditor({ resumeId }: ResumeEditorProps) {
 
   const changeDocument = (next: ResumeDocument) => edit({ ...draft, document: next });
 
-  // Style changes ride the same debounced save as every keystroke, so there
-  // is no second write path to keep consistent.
   const changeTemplate = (templateId: ResumeTemplateId) =>
     changeDocument({ ...document, templateId });
   const changeTheme = (theme: DocumentTheme) =>
     changeDocument({ ...document, theme });
 
-  // Show the user their own content in each template — unless they have not
-  // written any yet, in which case a blank sheet would say nothing.
   const thumbnailSource = isResumeEmpty(document)
     ? { ...SAMPLE_RESUME, theme: document.theme }
     : document;

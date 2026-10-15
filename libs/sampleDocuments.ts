@@ -1,5 +1,9 @@
 import { sectionHasContent } from "@/components/resume/templates/shared";
 import {
+  DEFAULT_COVER_LETTER_TEMPLATE,
+  type CoverLetterDocument,
+} from "./coverLetterSchema";
+import {
   DEFAULT_RESUME_TEMPLATE,
   type ResumeDocument,
 } from "./resume/resumeSchema";
@@ -175,5 +179,43 @@ export function isResumeEmpty(document: ResumeDocument): boolean {
     !document.profile.name.trim() &&
     !document.profile.title.trim() &&
     !document.sections.some(sectionHasContent)
+  );
+}
+
+export const SAMPLE_COVER_LETTER: CoverLetterDocument = {
+  sender: {
+    name: "Avery Lin",
+    title: "Senior Frontend Engineer",
+    email: "avery.lin@example.com",
+    phone: "(415) 555-0132",
+    location: "San Francisco, CA",
+  },
+  recipient: {
+    name: "Dana Okonjo",
+    title: "Engineering Manager",
+    company: "Meridian Software",
+    address: "480 Bryant Street\nSan Francisco, CA 94107",
+  },
+  date: "14 October 2026",
+  subject: "Application for Senior Frontend Engineer",
+  salutation: "Dear Ms. Okonjo,",
+  body: [
+    "I am writing to apply for the Senior Frontend Engineer role at Meridian Software. Over the past five years I have specialised in making large React applications fast enough that people stop noticing them, and your recent work on collaborative editing is exactly the kind of problem I want to be close to.",
+    "At Northwind Labs I led the rebuild of our customer dashboard, bringing time-to-interactive from 4.2 seconds to 1.1 and holding it there with budgets enforced in CI. That work meant shipping a shared component library now used by four product teams, which taught me as much about writing documentation other engineers will actually read as it did about rendering performance.",
+    "What draws me to Meridian specifically is the decision to treat the editor as a product surface rather than a feature. I would welcome the chance to talk about how I could help.",
+  ],
+  closing: "Sincerely,",
+  signature: "Avery Lin",
+  templateId: DEFAULT_COVER_LETTER_TEMPLATE,
+  theme: { ...DEFAULT_THEME },
+};
+
+/** Letter counterpart to `isResumeEmpty`. */
+export function isCoverLetterEmpty(document: CoverLetterDocument): boolean {
+  return (
+    !document.sender.name.trim() &&
+    !document.recipient.company.trim() &&
+    !document.subject.trim() &&
+    document.body.length === 0
   );
 }
