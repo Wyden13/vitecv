@@ -1,4 +1,4 @@
-import type { ResumeDocument } from "@/libs/resumeSchema";
+import type { ResumeDocument } from "@/libs/resume/resumeSchema";
 import { themeStyle } from "@/libs/templateTheme";
 import { getResumeTemplate } from "./templates/registry";
 

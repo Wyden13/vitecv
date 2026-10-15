@@ -11,7 +11,6 @@ export interface SaveStateProps {
 }
 
 export default function SaveState({ saving, savedAt, error }: SaveStateProps) {
-  // Re-render on a timer so "just now" ages into "2 minutes ago" on its own.
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {

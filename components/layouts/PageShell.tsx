@@ -3,7 +3,6 @@ import Topbar from "@/components/layouts/Topbar";
 export interface PageShellProps {
   header: string;
   actions?: React.ReactNode;
-  /** Full-bleed slot rendered directly under the header, e.g. a progress bar. */
   progress?: React.ReactNode;
   children?: React.ReactNode;
 }

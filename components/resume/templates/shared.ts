@@ -1,9 +1,10 @@
 import type {
   ProfileLink,
   ResumeProfile,
+  ResumeSection,
   SkillGroup,
   TimelineEntry,
-} from "@/libs/resumeSchema";
+} from "@/libs/resume/resumeSchema";
 
 /**
  * Content rules every resume template shares.
@@ -13,7 +14,6 @@ import type {
  * here means a fix lands everywhere at once.
  */
 
-/** "Jan 2020 – Present", or one side alone, or "" when neither is filled. */
 export function formatDateRange(entry: TimelineEntry): string {
   return [entry.start, entry.end].filter(Boolean).join(" – ");
 }
@@ -55,4 +55,26 @@ export function visibleLinks(profile: ResumeProfile): ProfileLink[] {
 
 export function linkText(link: ProfileLink): string {
   return link.label || link.url;
+}
+
+/** Drops the blank lines a one-per-line editor leaves behind. */
+export function visibleListItems(items: string[]): string[] {
+  return items.filter((item) => item.trim());
+}
+
+export function sectionHasContent(section: ResumeSection): boolean {
+  switch (section.layout) {
+    case "timeline":
+      return visibleEntries(section.entries).length > 0;
+    case "skills":
+      return visibleSkillGroups(section.groups).length > 0;
+    case "text":
+      return Boolean(section.body.trim());
+    case "list":
+      return visibleListItems(section.items).length > 0;
+  }
+}
+
+export function visibleSections(sections: ResumeSection[]): ResumeSection[] {
+  return sections.filter(sectionHasContent);
 }

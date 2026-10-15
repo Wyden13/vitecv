@@ -21,9 +21,7 @@ export interface DocumentTheme {
 
 export interface AccentSpec {
   label: string;
-  /** Headings, rules, links. Chosen to stay legible when printed in greyscale. */
   value: string;
-  /** Sidebar and band fills; light enough to keep dark body text readable. */
   soft: string;
 }
 
@@ -39,9 +37,6 @@ export interface FontPairSpec {
   heading: string;
   body: string;
 }
-
-// Two loaded families cover three pairings. `--font-geist-sans` and
-// `--font-source-serif` are declared by next/font in app/layout.tsx.
 const SANS = "var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif";
 const SERIF = "var(--font-source-serif), ui-serif, Georgia, serif";
 
@@ -66,7 +61,6 @@ export const FONT_PAIR_LIST = Object.entries(FONT_PAIRS).map(([id, spec]) => ({
   ...spec,
 }));
 
-/** Clamps stored values to known ids, so a hand-edited document still renders. */
 export function normalizeTheme(
   value: Partial<DocumentTheme> | undefined | null,
 ): DocumentTheme {
@@ -84,7 +78,6 @@ export function normalizeTheme(
   };
 }
 
-/** Inline custom properties for a template root. */
 export function themeStyle(theme: DocumentTheme): CSSProperties {
   const accent = ACCENTS[theme.accent] ?? ACCENTS[DEFAULT_THEME.accent];
   const fonts = FONT_PAIRS[theme.fontPair] ?? FONT_PAIRS[DEFAULT_THEME.fontPair];

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
-import { createBlankResume } from "@/libs/resumeService";
+import { createBlankResume } from "@/libs/resume/resumeService";
 import Button from "../Button";
 import { PlusIcon } from "../icons";
 import { useToast } from "../Toast";

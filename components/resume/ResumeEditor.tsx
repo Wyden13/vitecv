@@ -7,8 +7,8 @@ import {
   subscribeToResume,
   updateResume,
   type ResumeRecord,
-} from "@/libs/resumeService";
-import type { ResumeDocument, ResumeTemplateId } from "@/libs/resumeSchema";
+} from "@/libs/resume/resumeService";
+import type { ResumeDocument, ResumeTemplateId } from "@/libs/resume/resumeSchema";
 import { isResumeEmpty, SAMPLE_RESUME } from "@/libs/sampleDocuments";
 import type { DocumentTheme } from "@/libs/templateTheme";
 import DocumentThumbnail from "../templates/DocumentThumbnail";

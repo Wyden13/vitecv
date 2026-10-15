@@ -18,11 +18,10 @@ import {
   normalizeResumeDocument,
   type ResumeDocument,
   type ResumeTemplateId,
-} from "@/libs/resumeSchema";
+} from "@/libs/resume/resumeSchema";
 
 export type ResumeStatus = "extracted" | "editing";
 
-/** A resume as the editor sees it, with Firestore plumbing resolved. */
 export interface ResumeRecord {
   id: string;
   title: string;
@@ -41,7 +40,6 @@ function resumeDoc(userId: string, resumeId: string) {
   return doc(db, "users", userId, "resumes", resumeId);
 }
 
-/** "Jane Doe Resume.pdf" -> "Jane Doe Resume" */
 function titleFromFileName(fileName: string): string {
   const withoutExtension = fileName.replace(/\.[^.]+$/, "").trim();
   return withoutExtension || "Untitled resume";
@@ -64,14 +62,6 @@ export async function createResume(
   return created.id;
 }
 
-/**
- * Starts a resume from nothing, optionally in a chosen template.
- *
- * Both timestamps are written for the same reason `createResume` writes
- * them: `subscribeToResumes` orders by `updatedAt`, and that query drops
- * documents missing the field rather than erroring, so one would silently
- * never appear in the list.
- */
 export async function createBlankResume(
   userId: string,
   options: { title?: string; templateId?: ResumeTemplateId } = {},
@@ -92,10 +82,6 @@ export async function createBlankResume(
   return created.id;
 }
 
-/**
- * Live subscription to one resume. `onMissing` fires when the document does
- * not exist, which the editor turns into a not-found state.
- */
 export function subscribeToResume(
   userId: string,
   resumeId: string,
@@ -117,13 +103,14 @@ export function subscribeToResume(
       const updatedAt = data.updatedAt as Timestamp | null | undefined;
 
       handlers.onData({
+
+
         id: snapshot.id,
         title: data.title ?? "Untitled resume",
         fileName: data.fileName ?? null,
         rawText: data.rawText ?? "",
         status: (data.status as ResumeStatus) ?? "extracted",
         document: normalizeResumeDocument(data.document),
-        // Pending server timestamps arrive as null on the local echo.
         updatedAt: updatedAt?.toDate() ?? null,
       });
     },
@@ -131,7 +118,6 @@ export function subscribeToResume(
   );
 }
 
-/** What the resume list needs — no rawText, no parsed document. */
 export interface ResumeSummary {
   id: string;
   title: string;
@@ -140,13 +126,6 @@ export interface ResumeSummary {
   updatedAt: Date | null;
 }
 
-/**
- * Live subscription to every resume the user owns, newest edit first.
- *
- * Note that `orderBy` *excludes* documents missing the field rather than
- * erroring — a resume without `updatedAt` would silently never appear here.
- * Every `createResume` writes one, so keep it that way.
- */
 export function subscribeToResumes(
   userId: string,
   handlers: {
@@ -159,9 +138,6 @@ export function subscribeToResumes(
     (snapshot) => {
       handlers.onData(
         snapshot.docs.map((entry) => {
-          // A write that has not round-tripped yet has an unresolved
-          // serverTimestamp, which reads back as null by default — the new row
-          // would render dateless and sort to one end. The estimate avoids that.
           const data = entry.data({ serverTimestamps: "estimate" });
           const updatedAt = data.updatedAt as Timestamp | null | undefined;
 

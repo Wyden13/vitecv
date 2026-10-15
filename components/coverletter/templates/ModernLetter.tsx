@@ -1,12 +1,6 @@
-import type { CoverLetterDocument } from "@/libs/coverLetterSchema";
+import type { CoverLetterDocument } from "@/libs/coverletter/coverLetterSchema";
 import { paragraphs, recipientLines, senderContact } from "./shared";
 
-/**
- * Modern — accent header band, matching the Modern resume's sidebar tint.
- *
- * Pairs with that template so a submitted resume and letter read as one
- * document set. Full-bleed, so the registry zeroes the page padding.
- */
 export default function ModernLetter({
   document,
 }: {

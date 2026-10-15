@@ -23,7 +23,7 @@ function readCredentials() {
 
     throw new Error(
       `[firebase-admin] Missing ${missing.join(", ")}. Add them to .env — ` +
-        "see .env.example for where to find the values.",
+      "see .env.example for where to find the values.",
     );
   }
 
@@ -32,7 +32,6 @@ function readCredentials() {
 
 function getAdminApp(): App {
   if (getApps().length) return getApp();
-
   return initializeApp({ credential: cert(readCredentials()) });
 }
 

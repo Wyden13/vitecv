@@ -1,6 +1,7 @@
 "use client";
 
-import { createTimelineEntry, type TimelineEntry } from "@/libs/resumeSchema";
+import { createTimelineEntry, type TimelineEntry } from "@/libs/resume/resumeSchema";
+import type { TimelineLabels } from "@/libs/resume/sectionPresets";
 import Button from "../../Button";
 import { PlusIcon, TrashIcon } from "../../icons";
 import { Field, TextAreaField } from "./Field";
@@ -8,12 +9,7 @@ import { Field, TextAreaField } from "./Field";
 export interface TimelineFieldsProps {
   value: TimelineEntry[];
   onChange: (next: TimelineEntry[]) => void;
-  labels: {
-    title: string;
-    subtitle: string;
-    meta: string;
-    addLabel: string;
-  };
+  labels: TimelineLabels;
 }
 
 export default function TimelineFields({
@@ -89,8 +85,6 @@ export default function TimelineFields({
               onChange={(next) =>
                 replace(index, {
                   ...entry,
-                  // Keep blank lines out of the stored array, but allow the
-                  // user to type them while editing.
                   bullets: next.split("\n"),
                 })
               }

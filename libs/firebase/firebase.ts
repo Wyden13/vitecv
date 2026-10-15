@@ -26,7 +26,7 @@ if (process.env.NODE_ENV !== "production") {
   if (missing.length > 0) {
     console.warn(
       `[firebase] Missing config values: ${missing.join(", ")}. ` +
-        "Check .env and restart the dev server — NEXT_PUBLIC_* vars are read at build time.",
+      "Check .env and restart the dev server — NEXT_PUBLIC_* vars are read at build time.",
     );
   }
 }

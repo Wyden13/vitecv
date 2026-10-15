@@ -3,8 +3,8 @@ import type { ComponentType, CSSProperties } from "react";
 import type {
   CoverLetterDocument,
   CoverLetterTemplateId,
-} from "@/libs/coverLetterSchema";
-import { DEFAULT_COVER_LETTER_TEMPLATE } from "@/libs/coverLetterSchema";
+} from "@/libs/coverletter/coverLetterSchema";
+import { DEFAULT_COVER_LETTER_TEMPLATE } from "@/libs/coverletter/coverLetterSchema";
 import Formal from "./Formal";
 import ModernLetter from "./ModernLetter";
 
@@ -13,7 +13,6 @@ export interface CoverLetterTemplate {
   name: string;
   description: string;
   component: ComponentType<{ document: CoverLetterDocument }>;
-  /** See the resume registry: page padding belongs to `.doc-page`, not here. */
   pageStyle?: CSSProperties;
 }
 

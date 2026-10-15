@@ -9,7 +9,7 @@ import {
   deleteResume,
   subscribeToResumes,
   type ResumeSummary,
-} from "@/libs/resumeService";
+} from "@/libs/resume/resumeService";
 import { ChevronDownIcon, FileTextIcon, TrashIcon } from "../icons";
 import { useToast } from "../Toast";
 
@@ -176,11 +176,10 @@ function Message({
 }) {
   return (
     <p
-      className={`mt-3 text-sm ${
-        tone === "error"
+      className={`mt-3 text-sm ${tone === "error"
           ? "text-red-600 dark:text-red-400"
           : "text-zinc-600 dark:text-zinc-400"
-      }`}
+        }`}
     >
       {children}
     </p>

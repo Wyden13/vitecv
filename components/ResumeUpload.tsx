@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
 import { extractFileText } from "@/libs/extractFile";
-import { createResume } from "@/libs/resumeService";
+import { createResume } from "@/libs/resume/resumeService";
 import { UploadIcon } from "./icons";
 import { useToast } from "./Toast";
 import { useUploadProgress } from "./UploadProgress";
@@ -145,13 +145,12 @@ export default function ResumeUpload() {
           }
         }}
         onDrop={handleDrop}
-        className={`flex w-full flex-col items-center gap-1 rounded-md border border-dashed px-3 py-4 text-sm transition-colors focus-within:ring-2 focus-within:ring-zinc-900 dark:focus-within:ring-zinc-100 ${
-          disabled
+        className={`flex w-full flex-col items-center gap-1 rounded-md border border-dashed px-3 py-4 text-sm transition-colors focus-within:ring-2 focus-within:ring-zinc-900 dark:focus-within:ring-zinc-100 ${disabled
             ? "cursor-not-allowed border-zinc-200 text-zinc-400 dark:border-zinc-800 dark:text-zinc-600"
             : dragging
               ? "cursor-pointer border-accent bg-accent-subtle text-accent"
               : "cursor-pointer border-accent-border text-accent hover:bg-accent-subtle"
-        }`}
+          }`}
       >
         <UploadIcon className="size-4" />
         <span className="font-medium">Upload</span>

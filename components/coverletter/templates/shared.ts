@@ -1,7 +1,7 @@
 import type {
   CoverLetterDocument,
   LetterRecipient,
-} from "@/libs/coverLetterSchema";
+} from "@/libs/coverletter/coverLetterSchema";
 
 /** Content rules both letter templates share. */
 

@@ -3,45 +3,33 @@
 import { useState, type DragEvent } from "react";
 
 import {
-  SECTION_LABELS,
+  createSection,
   type ResumeDocument,
-  type SectionKind,
-  type TimelineSectionKind,
-} from "@/libs/resumeSchema";
+  type ResumeSection,
+} from "@/libs/resume/resumeSchema";
+import {
+  getSectionPreset,
+  presetForLayout,
+  type SectionPreset,
+} from "@/libs/resume/sectionPresets";
+import AddSectionPanel from "./AddSectionPanel";
 import SectionCard from "./SectionCard";
 import ProfileFields from "./fields/ProfileFields";
 import SkillFields from "./fields/SkillFields";
+import { ListFields, TextFields } from "./fields/TextFields";
 import TimelineFields from "./fields/TimelineFields";
 
-const TIMELINE_LABELS: Record<
-  TimelineSectionKind,
-  { title: string; subtitle: string; meta: string; addLabel: string }
-> = {
-  education: {
-    title: "School",
-    subtitle: "Program",
-    meta: "Credential / GPA",
-    addLabel: "Add education",
-  },
-  experience: {
-    title: "Company",
-    subtitle: "Role",
-    meta: "Location / type",
-    addLabel: "Add experience",
-  },
-  projects: {
-    title: "Project",
-    subtitle: "Role / context",
-    meta: "Tech stack",
-    addLabel: "Add project",
-  },
-  certificates: {
-    title: "Certificate",
-    subtitle: "Issuer",
-    meta: "Credential ID",
-    addLabel: "Add certificate",
-  },
-};
+/**
+ * The editor's left column: the pinned profile block, then whichever sections
+ * the resume has, then the control for adding more.
+ *
+ * Which fields a section shows comes from its layout, and the wording of those
+ * fields from its preset — so this component never needs to know that
+ * "Languages" or "Publications" exist.
+ */
+
+const PROFILE_HINT =
+  "Include email, phone & portfolio for easy employer access.";
 
 export interface SectionListProps {
   document: ResumeDocument;
@@ -57,86 +45,130 @@ function move<T>(items: T[], from: number, to: number): T[] {
 }
 
 export default function SectionList({ document, onChange }: SectionListProps) {
-  const [draggingKind, setDraggingKind] = useState<SectionKind | null>(null);
-  const [dropTarget, setDropTarget] = useState<SectionKind | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
 
-  const { sectionOrder } = document;
+  const { sections } = document;
 
-  const reorder = (from: number, to: number) => {
-    onChange({ ...document, sectionOrder: move(sectionOrder, from, to) });
-  };
+  const setSections = (next: ResumeSection[]) =>
+    onChange({ ...document, sections: next });
 
-  const handleDrop = (kind: SectionKind) => (event: DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    setDropTarget(null);
+  const reorder = (from: number, to: number) =>
+    setSections(move(sections, from, to));
 
-    if (!draggingKind || draggingKind === kind) return;
-
-    reorder(sectionOrder.indexOf(draggingKind), sectionOrder.indexOf(kind));
-    setDraggingKind(null);
-  };
-
-  const renderFields = (kind: SectionKind) => {
-    if (kind === "profile") {
-      return (
-        <ProfileFields
-          value={document.profile}
-          onChange={(profile) => onChange({ ...document, profile })}
-        />
-      );
-    }
-
-    if (kind === "skills") {
-      return (
-        <SkillFields
-          value={document.skills}
-          onChange={(skills) => onChange({ ...document, skills })}
-        />
-      );
-    }
-
-    return (
-      <TimelineFields
-        value={document[kind]}
-        onChange={(entries) => onChange({ ...document, [kind]: entries })}
-        labels={TIMELINE_LABELS[kind]}
-      />
+  const replace = (section: ResumeSection) =>
+    setSections(
+      sections.map((candidate) =>
+        candidate.id === section.id ? section : candidate,
+      ),
     );
+
+  const addSection = (preset: SectionPreset, heading?: string) =>
+    setSections([...sections, createSection(preset, heading)]);
+
+  const handleDrop = (id: string) => (event: DragEvent<HTMLElement>) => {
+    event.preventDefault();
+    setDropTargetId(null);
+
+    if (!draggingId || draggingId === id) return;
+
+    reorder(
+      sections.findIndex((section) => section.id === draggingId),
+      sections.findIndex((section) => section.id === id),
+    );
+    setDraggingId(null);
+  };
+
+  const renderFields = (section: ResumeSection) => {
+    switch (section.layout) {
+      case "timeline":
+        return (
+          <TimelineFields
+            value={section.entries}
+            onChange={(entries) => replace({ ...section, entries })}
+            labels={presetForLayout(section.presetId, "timeline").labels}
+          />
+        );
+
+      case "skills":
+        return (
+          <SkillFields
+            value={section.groups}
+            onChange={(groups) => replace({ ...section, groups })}
+            labels={presetForLayout(section.presetId, "skills").labels}
+          />
+        );
+
+      case "text":
+        return (
+          <TextFields
+            value={section.body}
+            onChange={(body) => replace({ ...section, body })}
+            labels={presetForLayout(section.presetId, "text").labels}
+          />
+        );
+
+      case "list":
+        return (
+          <ListFields
+            value={section.items}
+            onChange={(items) => replace({ ...section, items })}
+            labels={presetForLayout(section.presetId, "list").labels}
+          />
+        );
+    }
   };
 
   return (
     <div className="flex flex-col">
-      {sectionOrder.map((kind, index) => (
+      <SectionCard heading="Profile Info" hint={PROFILE_HINT}>
+        <ProfileFields
+          value={document.profile}
+          onChange={(profile) => onChange({ ...document, profile })}
+        />
+      </SectionCard>
+
+      {sections.map((section, index) => (
         <SectionCard
-          key={kind}
-          title={SECTION_LABELS[kind].title}
-          hint={SECTION_LABELS[kind].hint}
+          key={section.id}
+          heading={section.heading}
+          hint={getSectionPreset(section.presetId, section.layout).hint}
+          onHeadingChange={(heading) => replace({ ...section, heading })}
+          onRemove={() =>
+            setSections(
+              sections.filter((candidate) => candidate.id !== section.id),
+            )
+          }
           canMoveUp={index > 0}
-          canMoveDown={index < sectionOrder.length - 1}
+          canMoveDown={index < sections.length - 1}
           onMoveUp={() => reorder(index, index - 1)}
           onMoveDown={() => reorder(index, index + 1)}
-          isDragging={draggingKind === kind}
-          isDropTarget={dropTarget === kind && draggingKind !== kind}
+          isDragging={draggingId === section.id}
+          isDropTarget={dropTargetId === section.id && draggingId !== section.id}
           onDragStart={(event) => {
-            setDraggingKind(kind);
+            setDraggingId(section.id);
             event.dataTransfer.effectAllowed = "move";
-            // Firefox refuses to start a drag without payload.
-            event.dataTransfer.setData("text/plain", kind);
+            event.dataTransfer.setData("text/plain", section.id);
           }}
           onDragOver={(event) => {
             event.preventDefault();
             event.dataTransfer.dropEffect = "move";
-            setDropTarget(kind);
+            setDropTargetId(section.id);
           }}
-          onDrop={handleDrop(kind)}
+          onDrop={handleDrop(section.id)}
           onDragEnd={() => {
-            setDraggingKind(null);
-            setDropTarget(null);
+            setDraggingId(null);
+            setDropTargetId(null);
           }}
         >
-          {renderFields(kind)}
+          {renderFields(section)}
         </SectionCard>
       ))}
+
+      <AddSectionPanel
+        usedPresetIds={sections.map((section) => section.presetId)}
+        onAdd={addSection}
+      />
     </div>
   );
 }

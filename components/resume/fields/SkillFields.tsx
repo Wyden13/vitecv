@@ -1,6 +1,7 @@
 "use client";
 
-import { createSkillGroup, type SkillGroup } from "@/libs/resumeSchema";
+import { createSkillGroup, type SkillGroup } from "@/libs/resume/resumeSchema";
+import type { SkillsLabels } from "@/libs/resume/sectionPresets";
 import Button from "../../Button";
 import { PlusIcon, TrashIcon } from "../../icons";
 import { Field } from "./Field";
@@ -8,9 +9,14 @@ import { Field } from "./Field";
 export interface SkillFieldsProps {
   value: SkillGroup[];
   onChange: (next: SkillGroup[]) => void;
+  labels: SkillsLabels;
 }
 
-export default function SkillFields({ value, onChange }: SkillFieldsProps) {
+export default function SkillFields({
+  value,
+  onChange,
+  labels,
+}: SkillFieldsProps) {
   const replace = (index: number, group: SkillGroup) => {
     const next = [...value];
     next[index] = group;
@@ -23,7 +29,7 @@ export default function SkillFields({ value, onChange }: SkillFieldsProps) {
         <div key={group.id} className="flex items-end gap-2">
           <div className="w-40 shrink-0">
             <Field
-              label="Group"
+              label={labels.group}
               value={group.group}
               onChange={(next) => replace(index, { ...group, group: next })}
               placeholder="Languages"
@@ -31,7 +37,7 @@ export default function SkillFields({ value, onChange }: SkillFieldsProps) {
           </div>
           <div className="min-w-0 flex-1">
             <Field
-              label="Skills (comma separated)"
+              label={labels.items}
               value={group.items.join(", ")}
               onChange={(next) =>
                 replace(index, {
@@ -62,7 +68,7 @@ export default function SkillFields({ value, onChange }: SkillFieldsProps) {
         icon={<PlusIcon className="size-4" />}
         onClick={() => onChange([...value, createSkillGroup()])}
       >
-        Add skill group
+        {labels.addLabel}
       </Button>
     </div>
   );

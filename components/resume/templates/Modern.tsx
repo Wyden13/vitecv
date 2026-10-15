@@ -1,9 +1,9 @@
 import type {
   ResumeDocument,
-  SectionKind,
+  ResumeSection,
+  SkillsSection,
   TimelineEntry,
-} from "@/libs/resumeSchema";
-import { SECTION_LABELS } from "@/libs/resumeSchema";
+} from "@/libs/resume/resumeSchema";
 import {
   contactLines,
   formatDateRange,
@@ -12,6 +12,8 @@ import {
   visibleBullets,
   visibleEntries,
   visibleLinks,
+  visibleListItems,
+  visibleSections,
   visibleSkillGroups,
 } from "./shared";
 
@@ -22,26 +24,30 @@ import {
  * `.doc-page`'s padding (`--page-pad-*`) and this supplies its own insets per
  * column. `print-color-adjust` keeps the tint from being dropped by browsers
  * that strip backgrounds when printing.
+ *
+ * The split is by layout, not by heading: the sidebar takes every `skills`
+ * section — so an added "Languages" lands there without this file knowing the
+ * heading exists — and the main column takes everything else in document
+ * order.
  */
 
-function MainSection({
-  heading,
-  entries,
-}: {
-  heading: string;
-  entries: TimelineEntry[];
-}) {
-  const visible = visibleEntries(entries);
-  if (visible.length === 0) return null;
+function MainHeading({ children }: { children: string }) {
+  if (!children.trim()) return null;
 
   return (
-    <section className="mt-5 first:mt-0">
+    <>
       <h2 className="text-[11pt] font-bold uppercase tracking-[0.12em] text-[color:var(--tpl-accent)] [font-family:var(--tpl-heading)]">
-        {heading}
+        {children}
       </h2>
       <div className="mt-1 h-px bg-zinc-200" />
+    </>
+  );
+}
 
-      {visible.map((entry) => {
+function TimelineBody({ entries }: { entries: TimelineEntry[] }) {
+  return (
+    <>
+      {visibleEntries(entries).map((entry) => {
         const bullets = visibleBullets(entry);
         const dates = formatDateRange(entry);
 
@@ -82,6 +88,41 @@ function MainSection({
           </div>
         );
       })}
+    </>
+  );
+}
+
+/** Bulleted list, sharing the accent dot the timeline bullets use. */
+function ListBody({ items }: { items: string[] }) {
+  return (
+    <ul className="mt-2 space-y-1 text-[9.5pt] leading-snug text-zinc-800">
+      {visibleListItems(items).map((item, index) => (
+        <li key={index} className="flex gap-2">
+          <span
+            aria-hidden="true"
+            className="mt-[0.45em] size-[3px] shrink-0 rounded-full bg-[color:var(--tpl-accent)]"
+          />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function MainSection({ section }: { section: ResumeSection }) {
+  return (
+    <section className="mt-5 first:mt-0">
+      <MainHeading>{section.heading}</MainHeading>
+
+      {section.layout === "timeline" && (
+        <TimelineBody entries={section.entries} />
+      )}
+      {section.layout === "list" && <ListBody items={section.items} />}
+      {section.layout === "text" && (
+        <p className="mt-2 whitespace-pre-line text-[9.5pt] leading-snug text-zinc-800">
+          {section.body}
+        </p>
+      )}
     </section>
   );
 }
@@ -94,21 +135,41 @@ function SidebarHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
+function SidebarSkills({ section }: { section: SkillsSection }) {
+  return (
+    <>
+      {section.heading.trim() && (
+        <SidebarHeading>{section.heading}</SidebarHeading>
+      )}
+      <div className="mt-1 space-y-2">
+        {visibleSkillGroups(section.groups).map((group) => (
+          <div key={group.id} className="text-[9pt] leading-snug">
+            {group.group && (
+              <p className="font-semibold text-zinc-900">{group.group}</p>
+            )}
+            <p className="text-zinc-700">{skillItems(group)}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 export interface ModernProps {
   document: ResumeDocument;
 }
 
 export default function Modern({ document }: ModernProps) {
-  const { profile, skills } = document;
+  const { profile } = document;
   const contact = contactLines(profile);
   const links = visibleLinks(profile);
-  const skillGroups = visibleSkillGroups(skills);
 
-  // The sidebar owns identity and skills; the main column takes the rest in
-  // whatever order the editor put them.
-  const mainOrder = document.sectionOrder.filter(
-    (kind): kind is Exclude<SectionKind, "profile" | "skills"> =>
-      kind !== "profile" && kind !== "skills",
+  const sections = visibleSections(document.sections);
+  const sidebarSections = sections.filter(
+    (section): section is SkillsSection => section.layout === "skills",
+  );
+  const mainSections = sections.filter(
+    (section) => section.layout !== "skills",
   );
 
   return (
@@ -154,30 +215,14 @@ export default function Modern({ document }: ModernProps) {
           </>
         )}
 
-        {skillGroups.length > 0 && (
-          <>
-            <SidebarHeading>{SECTION_LABELS.skills.title}</SidebarHeading>
-            <div className="mt-1 space-y-2">
-              {skillGroups.map((group) => (
-                <div key={group.id} className="text-[9pt] leading-snug">
-                  {group.group && (
-                    <p className="font-semibold text-zinc-900">{group.group}</p>
-                  )}
-                  <p className="text-zinc-700">{skillItems(group)}</p>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+        {sidebarSections.map((section) => (
+          <SidebarSkills key={section.id} section={section} />
+        ))}
       </aside>
 
       <div className="min-w-0 flex-1 px-[0.5in] py-[0.5in]">
-        {mainOrder.map((kind) => (
-          <MainSection
-            key={kind}
-            heading={SECTION_LABELS[kind].title}
-            entries={document[kind]}
-          />
+        {mainSections.map((section) => (
+          <MainSection key={section.id} section={section} />
         ))}
       </div>
     </div>

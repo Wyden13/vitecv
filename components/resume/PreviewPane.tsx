@@ -13,7 +13,6 @@ const MIN_SCALE = 0.3;
 const MAX_SCALE = 1;
 
 export interface PreviewPaneProps {
-  /** A `.doc-page` element — a resume or cover-letter preview. */
   children: ReactNode;
 }
 

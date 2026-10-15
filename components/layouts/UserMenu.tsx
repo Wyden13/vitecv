@@ -22,8 +22,6 @@ export default function UserMenu() {
     setSigningOut(true);
 
     try {
-      // Order matters: clearing Firebase client auth first revokes the identity
-      // Firestore rules check, then removeSession clears the server cookie.
       await signOut();
       startTransition(() => {
         void removeSession();
@@ -41,7 +39,6 @@ export default function UserMenu() {
   return (
     <div className="flex items-center gap-2">
       {user.photoURL ? (
-        // eslint-disable-next-line @next/next/no-img-element -- Google avatar host is not in next.config images
         <img
           src={user.photoURL}
           alt=""

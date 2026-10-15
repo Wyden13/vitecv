@@ -2,9 +2,7 @@ import {
   DEFAULT_THEME,
   normalizeTheme,
   type DocumentTheme,
-} from "./templateTheme";
-
-/** Mirrors resumeSchema.ts: a plain shape, a factory, and a normalizer. */
+} from "../templateTheme";
 
 export type CoverLetterTemplateId = "formal" | "modernLetter";
 
@@ -36,7 +34,6 @@ export interface CoverLetterDocument {
   date: string;
   subject: string;
   salutation: string;
-  /** One string per paragraph; the editor splits a textarea on blank lines. */
   body: string[];
   closing: string;
   signature: string;
@@ -82,7 +79,6 @@ export function normalizeCoverLetterDocument(
   };
 }
 
-/** Textarea round-trip: blank lines separate paragraphs. */
 export function bodyToText(body: string[]): string {
   return body.join("\n\n");
 }

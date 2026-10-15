@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
-import type { ResumeTemplateId } from "@/libs/resumeSchema";
-import { createBlankResume } from "@/libs/resumeService";
+import type { ResumeTemplateId } from "@/libs/resume/resumeSchema";
+import { createBlankResume } from "@/libs/resume/resumeService";
 import { DEFAULT_THEME, type DocumentTheme } from "@/libs/templateTheme";
 import { useToast } from "../Toast";
 import {
@@ -89,11 +89,10 @@ export default function TemplateGallery({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setFilter(option.id)}
-                className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                  selected
-                    ? "bg-background font-medium text-zinc-900 shadow-sm dark:text-zinc-50"
-                    : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
-                }`}
+                className={`rounded-md px-3 py-1.5 text-sm transition-colors ${selected
+                  ? "bg-background font-medium text-zinc-900 shadow-sm dark:text-zinc-50"
+                  : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                  }`}
               >
                 {option.label}
               </button>
@@ -112,11 +111,10 @@ export default function TemplateGallery({
               onClick={() => setTheme({ ...theme, accent })}
               aria-label={`Preview in ${accent}`}
               aria-pressed={theme.accent === accent}
-              className={`size-5 rounded-full border-2 transition-colors ${
-                theme.accent === accent
-                  ? "border-zinc-900 dark:border-zinc-50"
-                  : "border-transparent"
-              }`}
+              className={`size-5 rounded-full border-2 transition-colors ${theme.accent === accent
+                ? "border-zinc-900 dark:border-zinc-50"
+                : "border-transparent"
+                }`}
               style={{
                 backgroundColor: {
                   emerald: "#047857",

@@ -1,7 +1,3 @@
-/**
- * Coarse "2 hours ago" phrasing. Deliberately imprecise — this is reassurance
- * that something saved, not a timestamp anyone reads closely.
- */
 export function formatRelativeTime(from: Date, now: number): string {
   const seconds = Math.round((now - from.getTime()) / 1000);
 

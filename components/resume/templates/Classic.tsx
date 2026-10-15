@@ -1,9 +1,9 @@
 import type {
   ResumeDocument,
-  SectionKind,
+  ResumeSection,
+  SkillGroup,
   TimelineEntry,
-} from "@/libs/resumeSchema";
-import { SECTION_LABELS } from "@/libs/resumeSchema";
+} from "@/libs/resume/resumeSchema";
 import {
   contactLines,
   formatDateRange,
@@ -12,6 +12,8 @@ import {
   visibleBullets,
   visibleEntries,
   visibleLinks,
+  visibleListItems,
+  visibleSections,
   visibleSkillGroups,
 } from "./shared";
 
@@ -22,25 +24,26 @@ import {
  * page is a real 8.5×11in sheet, so they mean the same thing on screen and on
  * paper. Colour is confined to the heading rules and links, which keeps the
  * layout readable when an accent is printed in greyscale.
+ *
+ * Every layout sits under the same ruled heading, so a custom section is
+ * indistinguishable from a built-in one on the page.
  */
 
-function TimelineSection({
-  heading,
-  entries,
-}: {
-  heading: string;
-  entries: TimelineEntry[];
-}) {
-  const visible = visibleEntries(entries);
-  if (visible.length === 0) return null;
+function SectionHeading({ children }: { children: string }) {
+  // A blank heading is a valid choice — print the content without one.
+  if (!children.trim()) return null;
 
   return (
-    <section className="mt-4">
-      <h2 className="border-b border-[color:var(--tpl-accent)] pb-0.5 text-[13pt] font-bold text-[color:var(--tpl-accent)] [font-family:var(--tpl-heading)]">
-        {heading}
-      </h2>
+    <h2 className="border-b border-[color:var(--tpl-accent)] pb-0.5 text-[13pt] font-bold text-[color:var(--tpl-accent)] [font-family:var(--tpl-heading)]">
+      {children}
+    </h2>
+  );
+}
 
-      {visible.map((entry) => {
+function TimelineBody({ entries }: { entries: TimelineEntry[] }) {
+  return (
+    <>
+      {visibleEntries(entries).map((entry) => {
         const bullets = visibleBullets(entry);
         const dates = formatDateRange(entry);
 
@@ -77,8 +80,47 @@ function TimelineSection({
           </div>
         );
       })}
-    </section>
+    </>
   );
+}
+
+function SkillsBody({ groups }: { groups: SkillGroup[] }) {
+  return (
+    <>
+      {visibleSkillGroups(groups).map((group) => (
+        <p key={group.id} className="mt-1 text-[10pt] text-zinc-800">
+          {group.group && <span className="font-bold">{group.group}: </span>}
+          {skillItems(group)}
+        </p>
+      ))}
+    </>
+  );
+}
+
+function SectionBody({ section }: { section: ResumeSection }) {
+  switch (section.layout) {
+    case "timeline":
+      return <TimelineBody entries={section.entries} />;
+
+    case "skills":
+      return <SkillsBody groups={section.groups} />;
+
+    case "text":
+      return (
+        <p className="mt-1 whitespace-pre-line text-[10pt] leading-snug text-zinc-800">
+          {section.body}
+        </p>
+      );
+
+    case "list":
+      return (
+        <ul className="mt-1 list-disc pl-5 text-[10pt] leading-snug text-zinc-800">
+          {visibleListItems(section.items).map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+      );
+  }
 }
 
 export interface ClassicProps {
@@ -86,80 +128,50 @@ export interface ClassicProps {
 }
 
 export default function Classic({ document }: ClassicProps) {
-  const { profile, skills } = document;
+  const { profile } = document;
   const contact = contactLines(profile);
   const links = visibleLinks(profile);
 
-  const renderSection = (kind: SectionKind) => {
-    const heading = SECTION_LABELS[kind].title;
+  return (
+    <>
+      <header>
+        <h1 className="text-[22pt] font-bold leading-tight text-zinc-900 [font-family:var(--tpl-heading)]">
+          {profile.name || "Your name"}
+        </h1>
+        {profile.title && (
+          <p className="text-[12pt] text-zinc-700">{profile.title}</p>
+        )}
 
-    switch (kind) {
-      case "profile":
-        return (
-          <header key={kind}>
-            <h1 className="text-[22pt] font-bold leading-tight text-zinc-900 [font-family:var(--tpl-heading)]">
-              {profile.name || "Your name"}
-            </h1>
-            {profile.title && (
-              <p className="text-[12pt] text-zinc-700">{profile.title}</p>
-            )}
-
-            {contact.length > 0 && (
-              <div className="mt-1 text-[10pt] italic text-zinc-700">
-                {contact.map((item) => (
-                  <div key={item}>{item}</div>
-                ))}
-              </div>
-            )}
-
-            {links.length > 0 && (
-              <div className="mt-0.5 text-[10pt]">
-                {links.map((link) => (
-                  <div key={link.id}>
-                    <a
-                      href={link.url}
-                      className="text-[color:var(--tpl-accent)] underline"
-                    >
-                      {linkText(link)}
-                    </a>
-                  </div>
-                ))}
-              </div>
-            )}
-          </header>
-        );
-
-      case "skills": {
-        const groups = visibleSkillGroups(skills);
-        if (groups.length === 0) return null;
-
-        return (
-          <section key={kind} className="mt-4">
-            <h2 className="border-b border-[color:var(--tpl-accent)] pb-0.5 text-[13pt] font-bold text-[color:var(--tpl-accent)] [font-family:var(--tpl-heading)]">
-              {heading}
-            </h2>
-            {groups.map((group) => (
-              <p key={group.id} className="mt-1 text-[10pt] text-zinc-800">
-                {group.group && (
-                  <span className="font-bold">{group.group}: </span>
-                )}
-                {skillItems(group)}
-              </p>
+        {contact.length > 0 && (
+          <div className="mt-1 text-[10pt] italic text-zinc-700">
+            {contact.map((item) => (
+              <div key={item}>{item}</div>
             ))}
-          </section>
-        );
-      }
+          </div>
+        )}
 
-      default:
-        return (
-          <TimelineSection
-            key={kind}
-            heading={heading}
-            entries={document[kind]}
-          />
-        );
-    }
-  };
+        {links.length > 0 && (
+          <div className="mt-0.5 text-[10pt]">
+            {links.map((link) => (
+              <div key={link.id}>
+                <a
+                  href={link.url}
+                  className="text-[color:var(--tpl-accent)] underline"
+                >
+                  {linkText(link)}
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+      </header>
 
-  return <>{document.sectionOrder.map(renderSection)}</>;
+      {visibleSections(document.sections).map((section) => (
+        <section key={section.id} className="mt-4">
+          <SectionHeading>{section.heading}</SectionHeading>
+          <SectionBody section={section} />
+        </section>
+      ))}
+    </>
+  );
 }

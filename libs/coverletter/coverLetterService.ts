@@ -18,14 +18,7 @@ import {
   normalizeCoverLetterDocument,
   type CoverLetterDocument,
   type CoverLetterTemplateId,
-} from "@/libs/coverLetterSchema";
-
-/**
- * Cover letter storage, deliberately shaped like `resumeService`.
- *
- * `users/{uid}/coverLetters` sits under the same `users/{uid}/{document=**}`
- * rule the resumes do, so no firestore.rules change is needed.
- */
+} from "@/libs/coverletter/coverLetterSchema";
 
 export interface CoverLetterRecord {
   id: string;
@@ -110,11 +103,8 @@ export function subscribeToCoverLetters(
     (snapshot) => {
       handlers.onData(
         snapshot.docs.map((entry) => {
-          // An unresolved serverTimestamp reads back as null by default, so a
-          // just-created row would render dateless and sort to one end.
           const data = entry.data({ serverTimestamps: "estimate" });
           const updatedAt = data.updatedAt as Timestamp | null | undefined;
-
           return {
             id: entry.id,
             title: data.title ?? "Untitled cover letter",

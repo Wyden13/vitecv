@@ -148,18 +148,16 @@ export default function SplitPane({
         onPointerCancel={endDrag}
         onKeyDown={handleKeyDown}
         onDoubleClick={() => commit(DEFAULT_RATIO)}
-        className={`group relative hidden w-1.5 shrink-0 touch-none cursor-col-resize items-center justify-center border-x transition-colors focus-visible:outline-none lg:flex print:hidden ${
-          dragging
+        className={`group relative hidden w-1.5 shrink-0 touch-none cursor-col-resize items-center justify-center border-x transition-colors focus-visible:outline-none lg:flex print:hidden ${dragging
             ? "border-accent-border bg-accent-subtle"
             : "border-zinc-200 bg-zinc-100 hover:bg-accent-subtle dark:border-zinc-800 dark:bg-zinc-900"
-        }`}
+          }`}
       >
         <span
-          className={`absolute flex h-10 w-4 cursor-col-resize items-center justify-center rounded-full border transition-colors ${
-            dragging
+          className={`absolute flex h-10 w-4 cursor-col-resize items-center justify-center rounded-full border transition-colors ${dragging
               ? "border-accent-border bg-accent-subtle text-accent"
               : "border-zinc-200 bg-background text-zinc-400 group-hover:text-accent group-focus-visible:border-accent group-focus-visible:text-accent dark:border-zinc-800"
-          }`}
+            }`}
         >
           <GripIcon className="size-3.5" />
         </span>

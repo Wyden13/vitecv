@@ -1,7 +1,7 @@
 "use client";
 
-import type { ResumeProfile } from "@/libs/resumeSchema";
-import { createId } from "@/libs/resumeSchema";
+import type { ResumeProfile } from "@/libs/resume/resumeSchema";
+import { createId } from "@/libs/resume/resumeSchema";
 import Button from "../../Button";
 import { PlusIcon, TrashIcon } from "../../icons";
 import { Field } from "./Field";

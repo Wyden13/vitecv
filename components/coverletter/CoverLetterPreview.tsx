@@ -1,8 +1,7 @@
-import type { CoverLetterDocument } from "@/libs/coverLetterSchema";
+import type { CoverLetterDocument } from "@/libs/coverletter/coverLetterSchema";
 import { themeStyle } from "@/libs/templateTheme";
 import { getCoverLetterTemplate } from "./templates/registry";
 
-/** Letter counterpart to ResumePreview; owns the paper, templates fill it. */
 export default function CoverLetterPreview({
   document,
 }: {

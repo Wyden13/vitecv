@@ -6,10 +6,6 @@ import { LOGIN_ROUTE } from "@/constants";
 import { getAdminAuth } from "@/libs/firebase/admin";
 import { readSessionCookie } from "@/libs/session";
 
-/**
- * Narrow view of the signed-in user. Deliberately not the decoded token —
- * only these fields are safe to hand to a component.
- */
 export interface SessionUser {
   uid: string;
   email: string | null;
@@ -31,8 +27,6 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   const cookie = await readSessionCookie();
   if (!cookie) return null;
 
-  // Resolved outside the try: a missing service account is a configuration
-  // error and should surface, not masquerade as a signed-out user.
   const adminAuth = getAdminAuth();
 
   try {
@@ -45,12 +39,10 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       picture: decoded.picture ?? null,
     };
   } catch {
-    // Expired, revoked, or forged — all mean "not signed in".
     return null;
   }
 }
 
-/** Same, but redirects to /login instead of returning null. */
 export async function requireUser(): Promise<SessionUser> {
   const user = await getCurrentUser();
   if (!user) redirect(LOGIN_ROUTE);

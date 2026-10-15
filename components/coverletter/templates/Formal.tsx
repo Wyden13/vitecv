@@ -1,13 +1,6 @@
-import type { CoverLetterDocument } from "@/libs/coverLetterSchema";
+import type { CoverLetterDocument } from "@/libs/coverletter/coverLetterSchema";
 import { paragraphs, recipientLines, senderContact } from "./shared";
 
-/**
- * Formal — traditional block business letter.
- *
- * Everything flush left, no indents, a blank line between paragraphs. Accent
- * appears only on the rule under the sender block, so the letter still reads
- * correctly printed in black and white.
- */
 export default function Formal({
   document,
 }: {
