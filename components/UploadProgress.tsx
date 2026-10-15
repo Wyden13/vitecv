@@ -11,6 +11,7 @@ export type ProcessingStage =
   | "idle"
   | "validating"
   | "extracting"
+  | "structuring"
   | "saving"
   | "completed"
   | "failed";
@@ -51,6 +52,7 @@ export function UploadProgressProvider({
   const isProcessing =
     stage === "validating" ||
     stage === "extracting" ||
+    stage === "structuring" ||
     stage === "saving";
 
   return (
@@ -71,6 +73,7 @@ const STAGE_LABELS: Record<ProcessingStage, string> = {
   idle: "",
   validating: "Validating document...",
   extracting: "Extracting document content...",
+  structuring: "Organising sections...",
   saving: "Saving resume data...",
   completed: "Resume processed successfully",
   failed: "Resume processing failed",
