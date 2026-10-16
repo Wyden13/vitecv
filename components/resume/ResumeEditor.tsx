@@ -9,7 +9,7 @@ import {
   type ResumeRecord,
 } from "@/libs/resume/resumeService";
 import type { ResumeDocument, ResumeTemplateId } from "@/libs/resume/resumeSchema";
-import { isResumeEmpty, SAMPLE_RESUME } from "@/libs/sampleDocuments";
+import { isResumeEmpty, SAMPLE_RESUME } from "@/data/sampleDocuments";
 import type { DocumentTheme } from "@/libs/templateTheme";
 import DocumentThumbnail from "../templates/DocumentThumbnail";
 import StylePanel from "../templates/StylePanel";

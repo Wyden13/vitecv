@@ -2,17 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-/**
- * A page shrunk to fit whatever box it is given.
- *
- * Deliberately not `.doc-page-scaler`: that one scales from `top center` so a
- * full-width preview stays centred in its pane, which throws the content off
- * to the side once the box is much narrower than the 816px page. Scaling from
- * `top left` inside a fixed Letter-ratio frame keeps a small card exact.
- */
-
-const PAGE_WIDTH_PX = 816; // 8.5in at 96dpi
-const PAGE_HEIGHT_PX = 1056; // 11in
+const PAGE_WIDTH_PX = 816;
+const PAGE_HEIGHT_PX = 1056;
 
 export interface DocumentThumbnailProps {
   children: ReactNode;

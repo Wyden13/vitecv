@@ -6,13 +6,13 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUser";
 import type {
   CoverLetterDocument,
   CoverLetterTemplateId,
-} from "@/libs/coverLetterSchema";
+} from "@/libs/coverletter/coverLetterSchema";
 import {
   subscribeToCoverLetter,
   updateCoverLetter,
   type CoverLetterRecord,
-} from "@/libs/coverLetterService";
-import { isCoverLetterEmpty, SAMPLE_COVER_LETTER } from "@/libs/sampleDocuments";
+} from "@/libs/coverletter/coverLetterService";
+import { isCoverLetterEmpty, SAMPLE_COVER_LETTER } from "@/data/sampleDocuments";
 import type { DocumentTheme } from "@/libs/templateTheme";
 import EditorHeader, { type EditorTab } from "../resume/EditorHeader";
 import PreviewPane from "../resume/PreviewPane";

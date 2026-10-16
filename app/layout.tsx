@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
+import { EB_Garamond, Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
@@ -19,6 +19,12 @@ const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
 });
 
+/** Document templates only — the Garamond offered by the Typeface control. */
+const ebGaramond = EB_Garamond({
+  variable: "--font-eb-garamond",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "viteCV",
   description: "Build, match, and edit your resume.",
@@ -33,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} ${ebGaramond.variable} h-full antialiased`}
     >
       <body className="h-full font-sans">
         <ToastProvider>{children}</ToastProvider>

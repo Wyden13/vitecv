@@ -4,11 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
-import type { CoverLetterTemplateId } from "@/libs/coverLetterSchema";
-import { createCoverLetter } from "@/libs/coverLetterService";
-import type { ResumeTemplateId } from "@/libs/resumeSchema";
-import { createBlankResume } from "@/libs/resumeService";
-import { DEFAULT_THEME, type DocumentTheme } from "@/libs/templateTheme";
+import type { CoverLetterTemplateId } from "@/libs/coverletter/coverLetterSchema";
+import { createCoverLetter } from "@/libs/coverletter/coverLetterService";
+import type { ResumeTemplateId } from "@/libs/resume/resumeSchema";
+import { createBlankResume } from "@/libs/resume/resumeService";
+import {
+  ACCENT_LIST,
+  DEFAULT_THEME,
+  type DocumentTheme,
+} from "@/libs/templateTheme";
+import { getResumeTemplate } from "../resume/templates/registry";
 import { useToast } from "../Toast";
 import {
   KIND_LABELS,
@@ -58,6 +63,7 @@ export default function TemplateGallery({
         const id = await createBlankResume(user.uid, {
           templateId: entry.id as ResumeTemplateId,
           title: `${entry.name} resume`,
+          theme: getResumeTemplate(entry.id).defaultTheme,
         });
         router.push(`/resume/${id}`);
       } else {
@@ -112,25 +118,18 @@ export default function TemplateGallery({
           <span className="text-xs text-zinc-500 dark:text-zinc-400">
             Preview accent
           </span>
-          {(["emerald", "navy", "burgundy", "slate"] as const).map((accent) => (
+          {ACCENT_LIST.map((accent) => (
             <button
-              key={accent}
+              key={accent.id}
               type="button"
-              onClick={() => setTheme({ ...theme, accent })}
-              aria-label={`Preview in ${accent}`}
-              aria-pressed={theme.accent === accent}
-              className={`size-5 rounded-full border-2 transition-colors ${theme.accent === accent
+              onClick={() => setTheme({ ...theme, accent: accent.id })}
+              aria-label={`Preview in ${accent.label}`}
+              aria-pressed={theme.accent === accent.id}
+              className={`size-5 rounded-full border-2 transition-colors ${theme.accent === accent.id
                 ? "border-zinc-900 dark:border-zinc-50"
                 : "border-transparent"
                 }`}
-              style={{
-                backgroundColor: {
-                  emerald: "#047857",
-                  navy: "#1e3a8a",
-                  burgundy: "#9f1239",
-                  slate: "#334155",
-                }[accent],
-              }}
+              style={{ backgroundColor: accent.value }}
             />
           ))}
         </div>

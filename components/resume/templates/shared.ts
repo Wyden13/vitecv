@@ -6,14 +6,6 @@ import type {
   TimelineEntry,
 } from "@/libs/resume/resumeSchema";
 
-/**
- * Content rules every resume template shares.
- *
- * Templates differ in layout, not in what counts as worth printing — a blank
- * bullet or an empty skill group should vanish from all of them. Keeping these
- * here means a fix lands everywhere at once.
- */
-
 export function formatDateRange(entry: TimelineEntry): string {
   return [entry.start, entry.end].filter(Boolean).join(" – ");
 }
@@ -21,20 +13,19 @@ export function formatDateRange(entry: TimelineEntry): string {
 export function visibleBullets(entry: TimelineEntry): string[] {
   return entry.bullets.filter((bullet) => bullet.trim());
 }
-
-/** Drops entries the user added but never filled in. */
 export function visibleEntries(entries: TimelineEntry[]): TimelineEntry[] {
   return entries.filter(
     (entry) =>
       entry.title.trim() ||
       entry.subtitle.trim() ||
       entry.meta.trim() ||
+      entry.description.trim() ||
+      entry.url.trim() ||
       formatDateRange(entry) ||
       visibleBullets(entry).length > 0,
   );
 }
 
-/** A group earns its heading if it is named or holds at least one skill. */
 export function visibleSkillGroups(groups: SkillGroup[]): SkillGroup[] {
   return groups.filter(
     (group) => group.group.trim() || group.items.some((item) => item.trim()),
@@ -54,10 +45,26 @@ export function visibleLinks(profile: ResumeProfile): ProfileLink[] {
 }
 
 export function linkText(link: ProfileLink): string {
-  return link.label || link.url;
+  return link.label || urlText(link.url);
 }
 
-/** Drops the blank lines a one-per-line editor leaves behind. */
+/** Paper has no room for "https://" — print the link, not the scheme. */
+export function urlText(url: string): string {
+  return url
+    .trim()
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//i, "")
+    .replace(/\/$/, "");
+}
+
+/**
+ * Authors type "github.com/me/thing" as often as the full URL, and a bare host
+ * in an href resolves against the app instead of leaving it.
+ */
+export function urlHref(url: string): string {
+  const trimmed = url.trim();
+  return /^[a-z][a-z0-9+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
 export function visibleListItems(items: string[]): string[] {
   return items.filter((item) => item.trim());
 }

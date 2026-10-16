@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { requireUser } from "@/libs/dal";
 
-/** App chrome. `/login` sits outside this group, so it renders without a sidebar. */
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex h-full overflow-hidden print:block print:h-auto print:overflow-visible">

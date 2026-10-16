@@ -6,7 +6,7 @@ import {
   bodyToText,
   textToBody,
   type CoverLetterDocument,
-} from "@/libs/coverLetterSchema";
+} from "@/libs/coverletter/coverLetterSchema";
 import SectionCard from "../resume/SectionCard";
 import { Field, TextAreaField } from "../resume/fields/Field";
 
@@ -86,7 +86,7 @@ export default function CoverLetterFields({
   return (
     <div>
       <SectionCard
-        title="Your details"
+        heading="Your details"
         hint="Appears in the letter's header."
         {...STATIC_DRAG}
       >
@@ -134,7 +134,7 @@ export default function CoverLetterFields({
       </SectionCard>
 
       <SectionCard
-        title="Recipient"
+        heading="Recipient"
         hint="Who the letter is addressed to. Leave blank to omit the block."
         {...STATIC_DRAG}
       >
@@ -177,7 +177,7 @@ export default function CoverLetterFields({
       </SectionCard>
 
       <SectionCard
-        title="Letter"
+        heading="Letter"
         hint="Separate paragraphs with a blank line."
         {...STATIC_DRAG}
       >

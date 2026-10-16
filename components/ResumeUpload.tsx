@@ -11,13 +11,9 @@ import { UploadIcon } from "./icons";
 import { useToast } from "./Toast";
 import { useUploadProgress } from "./UploadProgress";
 
-// Kept in sync with `extractFileText`, which handles exactly these two.
-// Legacy .doc is excluded deliberately: mammoth cannot read it, so allowing it
-// here would pass validation and then fail during extraction.
 const ALLOWED_EXTENSIONS = [".pdf", ".docx"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-/** Shared by the picker and the drop target; returns null when the file is valid. */
 function validate(file: File): string | null {
   const extension = file.name
     .substring(file.name.lastIndexOf("."))
@@ -121,9 +117,7 @@ export default function ResumeUpload() {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    // Reset so re-picking the same file fires `change` again.
     event.target.value = "";
-
     if (selectedFile) void accept(selectedFile);
   };
 
@@ -145,7 +139,6 @@ export default function ResumeUpload() {
           if (!disabled) setDragging(true);
         }}
         onDragLeave={(event) => {
-          // Ignore leave events fired by the icon/text inside the label.
           if (
             !event.currentTarget.contains(event.relatedTarget as Node | null)
           ) {

@@ -8,7 +8,7 @@ import {
   deleteCoverLetter,
   subscribeToCoverLetters,
   type CoverLetterSummary,
-} from "@/libs/coverLetterService";
+} from "@/libs/coverletter/coverLetterService";
 import { formatRelativeTime } from "@/libs/formatRelativeTime";
 import { ChevronDownIcon, FileTextIcon, TrashIcon } from "../icons";
 import { useToast } from "../Toast";

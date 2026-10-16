@@ -21,7 +21,6 @@ const KEYBOARD_STEP = 0.02;
 const clamp = (value: number) =>
   Math.min(MAX_RATIO, Math.max(MIN_RATIO, value));
 
-/** Only fires for *other* tabs; this tab stays in sync through `override`. */
 function subscribeToStorage(onChange: () => void) {
   window.addEventListener("storage", onChange);
   return () => window.removeEventListener("storage", onChange);
@@ -32,7 +31,6 @@ const serverSnapshot = () => null;
 export interface SplitPaneProps {
   primary: ReactNode;
   secondary: ReactNode;
-  /** localStorage key under which the split position is remembered. */
   storageKey: string;
   label: string;
 }

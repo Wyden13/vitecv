@@ -1,16 +1,6 @@
 "use client";
-
 import { useState, type DragEvent, type ReactNode } from "react";
-
 import { ChevronDownIcon, GripIcon, TrashIcon } from "../icons";
-
-/**
- * One collapsible card in the editor's section list.
- *
- * Every control is optional so the same card can serve the pinned Profile
- * block — which cannot be renamed, moved or removed — and the open-ended
- * sections, which can be all three.
- */
 
 export interface SectionCardProps {
   heading: string;

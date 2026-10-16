@@ -12,7 +12,6 @@ export default function CoverLetterEditorPage({
   );
 }
 
-/** `params` is runtime data, so awaiting it has to happen inside the boundary. */
 async function CoverLetterEditorLoader({
   params,
 }: {

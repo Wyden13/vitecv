@@ -19,15 +19,6 @@ import SkillFields from "./fields/SkillFields";
 import { ListFields, TextFields } from "./fields/TextFields";
 import TimelineFields from "./fields/TimelineFields";
 
-/**
- * The editor's left column: the pinned profile block, then whichever sections
- * the resume has, then the control for adding more.
- *
- * Which fields a section shows comes from its layout, and the wording of those
- * fields from its preset — so this component never needs to know that
- * "Languages" or "Publications" exist.
- */
-
 const PROFILE_HINT =
   "Include email, phone & portfolio for easy employer access.";
 

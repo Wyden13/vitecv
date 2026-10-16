@@ -12,13 +12,6 @@ import {
 import { getAdminAuth } from "@/libs/firebase/admin";
 import { readSessionCookie } from "@/libs/session";
 
-/**
- * Exchanges a Firebase ID token for a session cookie.
- *
- * The ID token is verified against Google's signing keys before anything is
- * written, and the cookie we set is itself signed — so unlike a bare uid, a
- * forged or tampered value cannot pass `verifySessionCookie` later.
- */
 export async function createSession(idToken: string) {
   const adminAuth = getAdminAuth();
 

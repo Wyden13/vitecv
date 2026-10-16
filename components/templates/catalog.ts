@@ -1,13 +1,6 @@
 import { COVER_LETTER_TEMPLATE_LIST } from "../coverletter/templates/registry";
 import { RESUME_TEMPLATE_LIST } from "../resume/templates/registry";
 
-/**
- * Every template on offer, flattened across document types for the gallery.
- *
- * The per-type registries stay the source of truth — this only joins them so
- * one grid can list both and filter between them.
- */
-
 export type TemplateKind = "resume" | "coverLetter";
 
 export interface CatalogEntry {

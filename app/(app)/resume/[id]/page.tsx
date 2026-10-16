@@ -10,12 +10,7 @@ export default function ResumeEditorPage({ params }: PageProps<"/resume/[id]">) 
   );
 }
 
-/** `params` is runtime data, so awaiting it has to happen inside the boundary. */
-async function ResumeEditorLoader({
-  params,
-}: {
-  params: PageProps<"/resume/[id]">["params"];
-}) {
+async function ResumeEditorLoader({ params }: { params: PageProps<"/resume/[id]">["params"]; }){
   const { id } = await params;
   return <ResumeEditor resumeId={id} />;
 }

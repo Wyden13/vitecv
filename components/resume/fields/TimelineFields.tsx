@@ -57,11 +57,13 @@ export default function TimelineFields({
               value={entry.subtitle}
               onChange={(next) => replace(index, { ...entry, subtitle: next })}
             />
-            <Field
-              label={labels.meta}
-              value={entry.meta}
-              onChange={(next) => replace(index, { ...entry, meta: next })}
-            />
+            {labels.meta && (
+              <Field
+                label={labels.meta}
+                value={entry.meta}
+                onChange={(next) => replace(index, { ...entry, meta: next })}
+              />
+            )}
             <div className="grid grid-cols-2 gap-2">
               <Field
                 label="Start"
@@ -76,6 +78,32 @@ export default function TimelineFields({
                 placeholder="Present"
               />
             </div>
+
+            {labels.description && (
+              <div className="sm:col-span-2">
+                <TextAreaField
+                  label={labels.description}
+                  value={entry.description}
+                  onChange={(next) =>
+                    replace(index, { ...entry, description: next })
+                  }
+                  placeholder="What it is, what you built it with, who it was for."
+                />
+              </div>
+            )}
+
+            {/* Only presets that declare the label offer the field. */}
+            {labels.url && (
+              <div className="sm:col-span-2">
+                <Field
+                  label={labels.url}
+                  type="url"
+                  value={entry.url}
+                  onChange={(next) => replace(index, { ...entry, url: next })}
+                  placeholder="https://github.com/you/project"
+                />
+              </div>
+            )}
           </div>
 
           <div className="mt-3">

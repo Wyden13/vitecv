@@ -16,7 +16,6 @@ export interface Toast {
   id: string;
   variant: ToastVariant;
   message: string;
-  /** ms before auto-dismiss; 0 keeps it until updated or dismissed. */
   duration: number;
 }
 
@@ -40,7 +39,6 @@ const NOOP: ToastContextValue = {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
-/** Falls back to a no-op so callers work outside a provider. */
 export function useToast(): ToastContextValue {
   return useContext(ToastContext) ?? NOOP;
 }
@@ -86,8 +84,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     [clearTimer],
   );
 
-  // A toast's timer is always cleared before a new one is armed, so an updated
-  // toast can never be dismissed by the timer from its previous state.
   const arm = useCallback(
     (id: string, duration: number) => {
       clearTimer(id);
@@ -135,7 +131,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ notify, update, dismiss }}>
       {children}
-
       <div
         aria-live="polite"
         className="pointer-events-none fixed bottom-4 right-4 z-50 flex flex-col-reverse gap-2"

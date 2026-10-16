@@ -20,11 +20,9 @@ export default function GoogleSignInButton() {
 
     try {
       const user = await signInWithGoogle();
-      // Null means the user dismissed the popup — not an error worth shouting about.
       if (!user) return;
 
       const idToken = await user.getIdToken();
-      // createSession redirects on success, so it must run in a transition.
       startTransition(() => {
         void createSession(idToken);
       });

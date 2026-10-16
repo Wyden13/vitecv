@@ -7,6 +7,7 @@ import {
   CUSTOM_PRESETS,
   DEFAULT_SECTION_PRESET_IDS,
   getSectionPreset,
+  presetForLayout,
   type SectionPreset,
 } from "./sectionPresets";
 
@@ -19,9 +20,13 @@ export const SECTION_LAYOUTS: SectionLayout[] = [
   "list",
 ];
 
-export type ResumeTemplateId = "classic" | "modern";
+export type ResumeTemplateId = "classic" | "modern" | "harvard";
 
-export const RESUME_TEMPLATE_IDS: ResumeTemplateId[] = ["classic", "modern"];
+export const RESUME_TEMPLATE_IDS: ResumeTemplateId[] = [
+  "classic",
+  "modern",
+  "harvard",
+];
 
 export const DEFAULT_RESUME_TEMPLATE: ResumeTemplateId = "classic";
 
@@ -47,6 +52,10 @@ export interface TimelineEntry {
   meta: string;
   start: string;
   end: string;
+  /** Free prose. Empty unless the preset offers the field. */
+  description: string;
+  /** Project or credential link. Empty unless the preset offers the field. */
+  url: string;
   bullets: string[];
 }
 
@@ -108,6 +117,8 @@ export function createTimelineEntry(): TimelineEntry {
     meta: "",
     start: "",
     end: "",
+    description: "",
+    url: "",
     bullets: [],
   };
 }
@@ -176,6 +187,9 @@ function normalizeTimelineEntry(value: unknown): TimelineEntry {
     meta: text(raw.meta),
     start: text(raw.start),
     end: text(raw.end),
+    // Never undefined: the document is written to Firestore as a plain spread.
+    description: text(raw.description),
+    url: text(raw.url),
     bullets: textList(raw.bullets),
   };
 }
@@ -188,6 +202,22 @@ function normalizeSkillGroup(value: unknown): SkillGroup {
     group: text(raw.group),
     items: textList(raw.items),
   };
+}
+
+/**
+ * A preset that drops its meta field would otherwise strand text on the page
+ * with no input left to edit it. Re-home it in the description where the preset
+ * offers one — Projects traded "Tech stack" for a description this way.
+ */
+function rehomeMeta(entry: TimelineEntry, presetId: string): TimelineEntry {
+  const { labels } = presetForLayout(presetId, "timeline");
+  if (labels.meta || !entry.meta.trim() || entry.description.trim()) {
+    return entry;
+  }
+
+  return labels.description
+    ? { ...entry, meta: "", description: entry.meta }
+    : { ...entry, meta: "" };
 }
 
 function normalizeSection(value: unknown): ResumeSection | null {
@@ -213,7 +243,9 @@ function normalizeSection(value: unknown): ResumeSection | null {
         ...base,
         layout,
         entries: Array.isArray(raw.entries)
-          ? raw.entries.map(normalizeTimelineEntry)
+          ? raw.entries.map((entry) =>
+              rehomeMeta(normalizeTimelineEntry(entry), presetId),
+            )
           : [],
       };
     case "skills":
@@ -273,7 +305,13 @@ function legacySection(kind: LegacyKind, stored: unknown): ResumeSection {
 
   return kind === "skills"
     ? { ...base, layout: "skills", groups: rows.map(normalizeSkillGroup) }
-    : { ...base, layout: "timeline", entries: rows.map(normalizeTimelineEntry) };
+    : {
+        ...base,
+        layout: "timeline",
+        entries: rows.map((row) =>
+          rehomeMeta(normalizeTimelineEntry(row), presetId),
+        ),
+      };
 }
 
 function sectionsFromLegacy(value: LegacyResumeDocument): ResumeSection[] {

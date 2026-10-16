@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { formatRelativeTime } from "@/libs/formatRelativeTime";
 import { CheckIcon, SpinnerIcon } from "../icons";
 export interface SaveStateProps {

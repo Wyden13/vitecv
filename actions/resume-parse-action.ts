@@ -4,17 +4,6 @@ import { getCurrentUser } from "@/libs/dal";
 import { callGlmJson } from "@/libs/insights/glm";
 import { structureMessages } from "@/libs/resume/parse/prompt";
 
-/**
- * Structures an uploaded resume with GLM. The browser sends text that has
- * already had contact details swapped for tokens (`redactContacts`), and it
- * does its own verification afterwards, because only it holds the original
- * text the output has to be checked against.
- *
- * The result goes back unvalidated on purpose: `normalizeParsedResume` on the
- * client is the one place that decides what survives.
- */
-
-/** Same ceiling as Insights. Lines past it land in "Other" via the coverage check. */
 const MAX_CHARS = 20_000;
 
 function capAtLine(text: string): string {
@@ -29,7 +18,6 @@ export async function structureResumeText(
 ): Promise<{ data: unknown; model: string }> {
   const user = await getCurrentUser();
 
-  // Without this the action is an open proxy to this project's GLM credits.
   if (!user) throw new Error("Sign in to import a resume.");
 
   if (typeof redactedText !== "string" || !redactedText.trim()) {

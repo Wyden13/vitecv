@@ -2,12 +2,12 @@ import { sectionHasContent } from "@/components/resume/templates/shared";
 import {
   DEFAULT_COVER_LETTER_TEMPLATE,
   type CoverLetterDocument,
-} from "./coverLetterSchema";
+} from "@/libs/coverletter/coverLetterSchema";
 import {
   DEFAULT_RESUME_TEMPLATE,
   type ResumeDocument,
-} from "./resume/resumeSchema";
-import { DEFAULT_THEME } from "./templateTheme";
+} from "../libs/resume/resumeSchema";
+import { DEFAULT_THEME } from "../libs/templateTheme";
 
 /**
  * Stand-in content for template previews.
@@ -81,6 +81,8 @@ export const SAMPLE_RESUME: ResumeDocument = {
           meta: "React · TypeScript",
           start: "Mar 2021",
           end: "Present",
+          description: "",
+          url: "",
           bullets: [
             "Led the rebuild of the customer dashboard, cutting time-to-interactive from 4.2s to 1.1s.",
             "Introduced a shared component library now used by four product teams.",
@@ -94,6 +96,8 @@ export const SAMPLE_RESUME: ResumeDocument = {
           meta: "Vue · D3",
           start: "Jul 2018",
           end: "Feb 2021",
+          description: "",
+          url: "",
           bullets: [
             "Built the charting layer behind the reporting suite, used daily by 12,000 analysts.",
             "Cut bundle size 38% by replacing the charting dependency with focused D3 modules.",
@@ -111,9 +115,12 @@ export const SAMPLE_RESUME: ResumeDocument = {
           id: "s-proj-1",
           title: "Tideline",
           subtitle: "Open-source scheduling toolkit",
-          meta: "1.2k stars",
+          meta: "",
           start: "2022",
           end: "",
+          description:
+            "TypeScript, Vite and Playwright. 1.2k stars and 40 contributors.",
+          url: "https://github.com/avery-lin/tideline",
           bullets: [
             "Timezone-aware recurring event engine with a 60kb runtime footprint.",
           ],
@@ -133,6 +140,8 @@ export const SAMPLE_RESUME: ResumeDocument = {
           meta: "GPA 3.8",
           start: "2014",
           end: "2018",
+          description: "",
+          url: "",
           bullets: [],
         },
       ],
@@ -150,6 +159,8 @@ export const SAMPLE_RESUME: ResumeDocument = {
           meta: "",
           start: "2023",
           end: "",
+          description: "",
+          url: "https://credential.net/avery-lin-pca",
           bullets: [],
         },
       ],

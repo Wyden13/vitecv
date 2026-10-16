@@ -2,20 +2,14 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-
 import {
   ACCENT_LIST,
+  BODY_SIZES,
   FONT_PAIR_LIST,
+  HEADING_SIZES,
   type DocumentTheme,
 } from "@/libs/templateTheme";
 import { CheckIcon } from "../icons";
-
-/**
- * Template and theme controls for the editor's Style tab.
- *
- * Generic over the template id so resumes and cover letters share one panel —
- * they differ only in which templates they offer and where "browse all" goes.
- */
 
 export interface StylePanelOption<T extends string> {
   id: T;
@@ -30,7 +24,6 @@ export interface StylePanelProps<T extends string> {
   onTemplateChange: (id: T) => void;
   onThemeChange: (theme: DocumentTheme) => void;
   galleryHref: string;
-  /** Miniature of the template, rendered with the live theme. */
   renderThumbnail: (id: T) => ReactNode;
 }
 
@@ -39,6 +32,46 @@ function GroupLabel({ children }: { children: ReactNode }) {
     <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
       {children}
     </h3>
+  );
+}
+function SizeRow<S extends number>({
+  label,
+  sizes,
+  value,
+  onChange,
+}: {
+  label: string;
+  sizes: readonly S[];
+  value: S;
+  onChange: (size: S) => void;
+}) {
+  return (
+    <div className="mt-6">
+      <GroupLabel>{label}</GroupLabel>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        {sizes.map((size) => {
+          const selected = size === value;
+
+          return (
+            <button
+              key={size}
+              type="button"
+              onClick={() => onChange(size)}
+              aria-pressed={selected}
+              aria-label={`${size} point`}
+              className={`rounded-md border px-3 py-1.5 text-sm tabular-nums transition-colors ${
+                selected
+                  ? "border-accent bg-accent-subtle text-accent"
+                  : "border-zinc-200 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:text-zinc-400"
+              }`}
+            >
+              {size}
+            </button>
+          );
+        })}
+        <span className="text-xs text-zinc-500 dark:text-zinc-400">pt</span>
+      </div>
+    </div>
   );
 }
 
@@ -149,6 +182,20 @@ export default function StylePanel<T extends string>({
           })}
         </div>
       </div>
+
+      <SizeRow
+        label="Name / header size"
+        sizes={HEADING_SIZES}
+        value={theme.headingSize}
+        onChange={(headingSize) => onThemeChange({ ...theme, headingSize })}
+      />
+
+      <SizeRow
+        label="Body text size"
+        sizes={BODY_SIZES}
+        value={theme.bodySize}
+        onChange={(bodySize) => onThemeChange({ ...theme, bodySize })}
+      />
 
       <Link
         href={galleryHref}

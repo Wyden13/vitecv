@@ -19,6 +19,7 @@ import {
   type ResumeDocument,
   type ResumeTemplateId,
 } from "@/libs/resume/resumeSchema";
+import { normalizeTheme, type DocumentTheme } from "@/libs/templateTheme";
 
 export type ResumeStatus = "extracted" | "editing";
 
@@ -69,10 +70,16 @@ export async function createResume(
 
 export async function createBlankResume(
   userId: string,
-  options: { title?: string; templateId?: ResumeTemplateId } = {},
+  options: {
+    title?: string;
+    templateId?: ResumeTemplateId;
+    /** Starting theme, for templates drawn around a particular typeface. */
+    theme?: DocumentTheme;
+  } = {},
 ): Promise<string> {
   const document = createEmptyResumeDocument();
   if (options.templateId) document.templateId = options.templateId;
+  if (options.theme) document.theme = normalizeTheme(options.theme);
 
   const created = await addDoc(resumesCollection(userId), {
     title: options.title?.trim() || "Untitled resume",

@@ -155,12 +155,14 @@ function verifySection(
           meta: keep(entry.meta),
           start: keep(entry.start),
           end: keep(entry.end),
+          description: keep(entry.description),
+          url: keep(entry.url),
           bullets: entry.bullets.map(keep).filter(Boolean),
         }))
         .filter(
           (entry) =>
             entry.title || entry.subtitle || entry.meta || entry.start || entry.end ||
-            entry.bullets.length > 0,
+            entry.description || entry.url || entry.bullets.length > 0,
         );
 
       return entries.length ? { ...section, presetId, entries } : null;

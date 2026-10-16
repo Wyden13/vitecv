@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
-import { createCoverLetter } from "@/libs/coverLetterService";
+import { createCoverLetter } from "@/libs/coverletter/coverLetterService";
 import Button from "../Button";
 import { PlusIcon } from "../icons";
 import { useToast } from "../Toast";

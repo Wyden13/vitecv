@@ -1,17 +1,6 @@
-/**
- * One headline number with its label.
- *
- * A single value is not a chart — a one-bar bar chart says less than the number
- * does. Values use the font's proportional figures, never `tabular-nums`:
- * equal-width digits make a short number look loose at this size, and nothing
- * here aligns into a column.
- */
-
 export interface StatTileProps {
-  /** Sentence case, no trailing colon. */
   label: string;
   value: string | number;
-  /** Optional context under the value — a ratio, a period, a caveat. */
   hint?: string;
 }
 

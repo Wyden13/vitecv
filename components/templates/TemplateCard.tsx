@@ -8,7 +8,6 @@ import DocumentThumbnail from "./DocumentThumbnail";
 
 export interface TemplateCardProps {
   entry: CatalogEntry;
-  /** Full-size page; the card scales it down. */
   preview: ReactNode;
   onUse: () => void;
   busy?: boolean;

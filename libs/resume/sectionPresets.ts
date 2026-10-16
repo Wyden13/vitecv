@@ -12,7 +12,12 @@ export const PRESET_GROUPS: PresetGroup[] = [
 export interface TimelineLabels {
   title: string;
   subtitle: string;
-  meta: string;
+  /** Absent means the section has no meta field. */
+  meta?: string;
+  /** Absent means the section has no description field. */
+  description?: string;
+  /** Absent means the section has no link field. */
+  url?: string;
   addLabel: string;
 }
 
@@ -118,6 +123,18 @@ export const SECTION_PRESETS: SectionPreset[] = [
     },
   },
   {
+    id: "your-highlight",
+    heading: "Your Highlight",
+    hint: "Work and tasks worth calling out, as bullet points.",
+    group: "Core",
+    layout: "list",
+    labels: {
+      field: "Highlights (one per line)",
+      placeholder:
+        "Shipped the billing rewrite\nRan the on-call rotation for 18 engineers",
+    },
+  },
+  {
     id: "skills",
     heading: "Skills",
     hint: "Add your main skills for recruiters to see at a glance.",
@@ -150,7 +167,8 @@ export const SECTION_PRESETS: SectionPreset[] = [
     labels: {
       title: "Project",
       subtitle: "Role / context",
-      meta: "Tech stack",
+      description: "Description",
+      url: "Link",
       addLabel: "Add project",
     },
   },
@@ -203,6 +221,7 @@ export const SECTION_PRESETS: SectionPreset[] = [
       title: "Certificate",
       subtitle: "Issuer",
       meta: "Credential ID",
+      url: "Link",
       addLabel: "Add certificate",
     },
   },

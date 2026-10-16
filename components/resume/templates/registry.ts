@@ -2,7 +2,9 @@ import type { ComponentType, CSSProperties } from "react";
 
 import type { ResumeDocument, ResumeTemplateId } from "@/libs/resume/resumeSchema";
 import { DEFAULT_RESUME_TEMPLATE } from "@/libs/resume/resumeSchema";
+import type { DocumentTheme } from "@/libs/templateTheme";
 import Classic from "./Classic";
+import Harvard from "./Harvard";
 import Modern from "./Modern";
 
 export interface ResumeTemplate {
@@ -11,6 +13,12 @@ export interface ResumeTemplate {
   description: string;
   component: ComponentType<{ document: ResumeDocument }>;
   pageStyle?: CSSProperties;
+  /**
+   * Theme a *new* resume starts on, for templates drawn around a particular
+   * typeface or type size. Applied at creation only — switching template in the
+   * Style tab leaves the choices the author has already made alone.
+   */
+  defaultTheme?: DocumentTheme;
 }
 
 export const RESUME_TEMPLATES: Record<ResumeTemplateId, ResumeTemplate> = {
@@ -28,6 +36,19 @@ export const RESUME_TEMPLATES: Record<ResumeTemplateId, ResumeTemplate> = {
       "Tinted sidebar for contact details and skills, with experience alongside.",
     component: Modern,
     pageStyle: { "--page-pad-x": "0in", "--page-pad-y": "0in" } as CSSProperties,
+  },
+  harvard: {
+    id: "harvard",
+    name: "Harvard",
+    description:
+      "Centred headings and serif type, printed in black. The Harvard career-services format.",
+    component: Harvard,
+    defaultTheme: {
+      accent: "black",
+      fontPair: "times",
+      headingSize: 14,
+      bodySize: 11,
+    },
   },
 };
 

@@ -3,24 +3,19 @@ import Button, { type ButtonVariant } from "./Button";
 export type OptionCardTone = "neutral" | "accent" | "accentAlt";
 
 export interface OptionCardProps {
-  /** Icon component; rendered large in the chip and small inside the action. */
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
   actionLabel?: string;
-  /** Replaces the default Button — e.g. a file-picker control. */
   action?: React.ReactNode;
   tone?: OptionCardTone;
-  /** Short label pinned to the card's top-right, e.g. "Recommended". */
   badge?: string;
 }
 
 const CARD_BORDER: Record<OptionCardTone, string> = {
-  neutral:
-    "border-zinc-200 hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700",
+  neutral:"border-zinc-200 hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700",
   accent: "border-accent-border",
-  accentAlt:
-    "border-zinc-200 hover:border-accent-alt-border dark:border-zinc-800",
+  accentAlt:"border-zinc-200 hover:border-accent-alt-border dark:border-zinc-800",
 };
 
 const CHIP: Record<OptionCardTone, string> = {
@@ -45,18 +40,14 @@ export default function OptionCard({
   badge,
 }: OptionCardProps) {
   return (
-    <div
-      className={`relative flex flex-col rounded-2xl border bg-background p-6 text-center transition-colors ${CARD_BORDER[tone]}`}
-    >
+    <div className={`relative flex flex-col rounded-2xl border bg-background p-6 text-center transition-colors ${CARD_BORDER[tone]}`}>
       {badge ? (
         <span className="absolute right-3 top-3 rounded-full bg-accent-subtle px-2 py-0.5 text-[11px] font-medium text-accent">
           {badge}
         </span>
       ) : null}
 
-      <div
-        className={`mx-auto flex size-12 items-center justify-center rounded-xl ${CHIP[tone]}`}
-      >
+      <div className={`mx-auto flex size-12 items-center justify-center rounded-xl ${CHIP[tone]}`}>
         <Icon className="size-6" />
       </div>
 
