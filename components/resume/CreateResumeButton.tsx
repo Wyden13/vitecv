@@ -9,12 +9,6 @@ import Button from "../Button";
 import { PlusIcon } from "../icons";
 import { useToast } from "../Toast";
 
-/**
- * Starts an empty resume and opens it.
- *
- * A client island rather than a link: the document has to exist before there
- * is an id to navigate to, and the page around it is a server component.
- */
 export default function CreateResumeButton() {
   const router = useRouter();
   const { user, loading } = useFirebaseUser();

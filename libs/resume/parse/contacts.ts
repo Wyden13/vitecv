@@ -18,23 +18,19 @@ export interface Contacts {
 export interface RedactedText {
   text: string;
   contacts: Contacts;
-  /** Token → original string, e.g. "[EMAIL1]" → "jane@example.com". */
   tokens: Map<string, string>;
 }
 
-/** Lines counted as the resume's header, where profile links live. */
 const HEADER_LINES = 10;
 
 const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 
-// Loose on purpose; `isPhone` does the real filtering by digit count.
 const PHONE = /\+?\(?\d[\d\s().-]{7,}\d/g;
 
 const PROFILE_DOMAINS =
   "linkedin\\.com|github\\.com|gitlab\\.com|github\\.io|behance\\.net|dribbble\\.com|medium\\.com|stackoverflow\\.com|kaggle\\.com|twitter\\.com|x\\.com|vercel\\.app|netlify\\.app";
 
 const URL = new RegExp(
-  // The lookbehind stops "x.com" matching inside "netflix.com".
   `(?<![\\w.@-])(?:https?:\\/\\/[^\\s|,;()<>]+|www\\.[^\\s|,;()<>]+|(?:[\\w-]+\\.)*(?:${PROFILE_DOMAINS})(?:\\/[^\\s|,;()<>]*)?)`,
   "gi",
 );
@@ -44,13 +40,9 @@ export const TOKEN = /\[(?:EMAIL|PHONE|LINK)\d+\]/g;
 function isPhone(candidate: string, inHeader: boolean): boolean {
   const digits = candidate.replace(/\D/g, "").length;
   if (digits < 9 || digits > 15) return false;
-
-  // Outside the header a bare digit run is more likely an ID or a credential
-  // number than a phone, so only an unmistakable format counts there.
   return inHeader || /^[+(]/.test(candidate.trim());
 }
 
-/** "linkedin.com/in/jane" → "LinkedIn"; unknown hosts fall back to "Website". */
 function labelFor(url: string): string {
   const host = url
     .replace(/^https?:\/\//i, "")

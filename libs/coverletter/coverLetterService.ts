@@ -33,10 +33,12 @@ export interface CoverLetterSummary {
   updatedAt: Date | null;
 }
 
+// Get Coverletter collection from firestore using userId
 function lettersCollection(userId: string) {
   return collection(db, "users", userId, "coverLetters");
 }
 
+//
 function letterDoc(userId: string, letterId: string) {
   return doc(db, "users", userId, "coverLetters", letterId);
 }
@@ -52,8 +54,6 @@ export async function createCoverLetter(
     title: options.title?.trim() || "Untitled cover letter",
     document,
     createdAt: serverTimestamp(),
-    // Required, not incidental: the list query orders by this and silently
-    // excludes documents that lack it.
     updatedAt: serverTimestamp(),
   });
 

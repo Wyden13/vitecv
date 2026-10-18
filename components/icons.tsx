@@ -145,3 +145,49 @@ export function FileTextIcon(props: IconProps) {
     </StrokeIcon>
   );
 }
+
+export function AlertTriangleIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M10.3 3.9 2.4 17.1A2 2 0 0 0 4.1 20h15.8a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+      <path d="M12 9v4M12 17h.01" />
+    </StrokeIcon>
+  );
+}
+
+export function MapPinIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M20 10c0 5.2-6.3 11-8 11s-8-5.8-8-11a8 8 0 1 1 16 0Z" />
+      <circle cx="12" cy="10" r="2.75" />
+    </StrokeIcon>
+  );
+}
+
+export function ClockIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5.25L15.5 14" />
+    </StrokeIcon>
+  );
+}
+
+export function BriefcaseIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <rect x="3" y="7.5" width="18" height="12.5" rx="2" />
+      <path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M3 12.5h18" />
+    </StrokeIcon>
+  );
+}
+
+export function BanknoteIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <rect x="2.5" y="6" width="19" height="12" rx="2" />
+      <circle cx="12" cy="12" r="2.5" />
+      <path d="M6 10v4M18 10v4" />
+    </StrokeIcon>
+  );
+}

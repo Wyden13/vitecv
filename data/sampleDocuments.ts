@@ -9,18 +9,6 @@ import {
 } from "../libs/resume/resumeSchema";
 import { DEFAULT_THEME } from "../libs/templateTheme";
 
-/**
- * Stand-in content for template previews.
- *
- * The gallery has to show what a template looks like before any resume
- * exists, and uploads only store raw text today — nothing populates a
- * document automatically — so without a fixture every thumbnail would be a
- * blank sheet. Fictional throughout.
- *
- * It carries one section of every layout, so a thumbnail exercises all four
- * rather than only the dated kind.
- */
-
 export const SAMPLE_RESUME: ResumeDocument = {
   profile: {
     name: "Avery Lin",

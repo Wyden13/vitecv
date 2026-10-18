@@ -18,10 +18,8 @@ export interface EditorHeaderProps extends SaveStateProps {
   onTitleChange: (title: string) => void;
   activeTab: EditorTab;
   onTabChange: (tab: EditorTab) => void;
-  /** Breadcrumb target — the list this document belongs to. */
   backHref?: string;
   backLabel?: string;
-  /** Accessible name and placeholder for the title input. */
   titleLabel?: string;
 }
 
@@ -63,11 +61,6 @@ export default function EditorHeader({
           <Button variant="secondary" size="sm" disabled title="Coming soon">
             Job Match
           </Button>
-          {/*
-            The print stylesheet already reduces the page to the preview pane
-            at full scale on Letter paper, so the browser's own dialog is the
-            PDF export — no renderer to ship.
-          */}
           <Button
             variant="primary"
             size="sm"

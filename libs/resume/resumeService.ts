@@ -58,7 +58,6 @@ export async function createResume(
     title: titleFromFileName(fileName),
     fileName,
     rawText,
-    // A structured import is ready to edit; a bare upload still needs structuring.
     status: (document ? "editing" : "extracted") satisfies ResumeStatus,
     document: document ?? createEmptyResumeDocument(),
     createdAt: serverTimestamp(),
@@ -73,7 +72,6 @@ export async function createBlankResume(
   options: {
     title?: string;
     templateId?: ResumeTemplateId;
-    /** Starting theme, for templates drawn around a particular typeface. */
     theme?: DocumentTheme;
   } = {},
 ): Promise<string> {

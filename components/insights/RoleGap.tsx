@@ -10,16 +10,6 @@ import {
 import Button from "../Button";
 import { CheckIcon, PlusIcon, SpinnerIcon } from "../icons";
 
-/**
- * What a target role expects, and which of it the resume already evidences.
- *
- * Presence is a status, so it is carried by **shape and icon**, not hue: a
- * filled chip with a check versus a hollow dashed chip with a plus, under two
- * labelled groups. That is not only the status rule — the app's dark accent and
- * alt-accent (`#50fa7b` / `#ffb86c`) measure ΔE 3.3 under deuteranopia, so a
- * green/orange split would be invisible to some readers in dark mode.
- */
-
 export interface RoleGapProps {
   gap: RoleGapResult | null;
   pending: boolean;

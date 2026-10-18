@@ -12,11 +12,8 @@ export const PRESET_GROUPS: PresetGroup[] = [
 export interface TimelineLabels {
   title: string;
   subtitle: string;
-  /** Absent means the section has no meta field. */
   meta?: string;
-  /** Absent means the section has no description field. */
   description?: string;
-  /** Absent means the section has no link field. */
   url?: string;
   addLabel: string;
 }

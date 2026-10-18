@@ -13,11 +13,6 @@ export interface ResumeTemplate {
   description: string;
   component: ComponentType<{ document: ResumeDocument }>;
   pageStyle?: CSSProperties;
-  /**
-   * Theme a *new* resume starts on, for templates drawn around a particular
-   * typeface or type size. Applied at creation only — switching template in the
-   * Style tab leaves the choices the author has already made alone.
-   */
   defaultTheme?: DocumentTheme;
 }
 

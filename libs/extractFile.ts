@@ -132,7 +132,6 @@ function linesFromHtml(root: Element, lines: string[]) {
     }
 
     if (child.tagName === "LI") {
-      // Own text only; nested lists are walked as their own items below.
       const own = Array.from(child.childNodes)
         .filter((node) => !(node instanceof Element && /^(UL|OL)$/.test(node.tagName)))
         .map((node) => node.textContent ?? "")
@@ -171,7 +170,6 @@ async function extractDOCX(file: File): Promise<string> {
   return tidy(lines.join("\n"));
 }
 
-/** Trailing spaces off, runs of blank lines collapsed to one. */
 function tidy(text: string): string {
   return text
     .split("\n")

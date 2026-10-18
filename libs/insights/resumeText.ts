@@ -35,7 +35,6 @@ export type BlockKind =
 
 export interface TextBlock {
   id: string;
-  /** Shown in the evidence panel, e.g. "Experience · Northwind Labs". */
   label: string;
   text: string;
   kind: BlockKind;
@@ -49,7 +48,6 @@ function push(
   if (text) blocks.push({ ...block, text });
 }
 
-/** "Experience · Northwind Labs", or just the heading when there is no detail. */
 function label(heading: string, detail?: string): string {
   const parts = [heading.trim() || "Section", detail?.trim()].filter(Boolean);
   return parts.join(" · ");
@@ -134,10 +132,8 @@ function blocksFromDocument(resume: ResumeRecord): TextBlock[] {
   return blocks;
 }
 
-/** Fallback for an upload nobody has structured yet: paragraphs of rawText. */
 function blocksFromRawText(rawText: string): TextBlock[] {
   const blocks: TextBlock[] = [];
-
   rawText
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
@@ -154,15 +150,8 @@ function blocksFromRawText(rawText: string): TextBlock[] {
   return blocks;
 }
 
-/**
- * Prefers the structured document and falls back to the uploaded text, so a
- * freshly uploaded resume and a hand-built one both analyse.
- */
 export function blocksFromResume(resume: ResumeRecord): TextBlock[] {
   const structured = blocksFromDocument(resume);
-
-  // One lone profile block means nothing has been filled in yet — the upload's
-  // own text is the better source.
   if (structured.filter((block) => block.kind !== "profile").length > 0) {
     return structured;
   }
@@ -175,11 +164,6 @@ export function serializeBlocks(blocks: TextBlock[]): string {
   return blocks.map((block) => `[${block.id}] ${block.text}`).join("\n");
 }
 
-/**
- * Counted locally rather than asked of the model: we know exactly how many
- * bullet blocks we sent, so the denominator of the quantified-bullet ratio
- * never depends on the model counting correctly.
- */
 export function countBullets(blocks: TextBlock[]): number {
   return blocks.filter((block) => block.kind === "bullet").length;
 }

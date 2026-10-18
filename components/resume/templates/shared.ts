@@ -48,7 +48,7 @@ export function linkText(link: ProfileLink): string {
   return link.label || urlText(link.url);
 }
 
-/** Paper has no room for "https://" — print the link, not the scheme. */
+/** remove "https://" */
 export function urlText(url: string): string {
   return url
     .trim()

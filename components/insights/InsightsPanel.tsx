@@ -35,20 +35,6 @@ import ResumePicker from "./ResumePicker";
 import RoleGap from "./RoleGap";
 import SignalCards from "./SignalCards";
 
-/**
- * The Insights page: pick a resume, read its cached analysis, re-run when it
- * drifts.
- *
- * Nothing calls GLM on its own. A stored analysis renders instantly, and a
- * request only leaves on a click, because every one of them costs money — an
- * auto-analysing page would bill the user for navigating.
- *
- * Staleness is surfaced rather than hidden: the hash of the text we would send
- * is compared against the hash stored with the analysis, so an edited resume
- * says "out of date" instead of quietly presenting old numbers as current.
- */
-
-/** Data tagged with the resume it was loaded for. */
 type Keyed<T> = { id: string; value: T } | null;
 
 function forResume<T>(state: Keyed<T>, resumeId: string | null): T | null {
@@ -93,11 +79,6 @@ export default function InsightsPanel() {
 
   const [resumes, setResumes] = useState<ResumeSummary[] | null>(null);
   const [resumeId, setResumeId] = useState<string | null>(null);
-
-  // Each subscription's result is tagged with the resume it belongs to and read
-  // only when that still matches the selection. Clearing these from an effect
-  // body instead would cascade renders, and until the clear landed the previous
-  // resume's analysis would be on screen under the new resume's name.
   const [resumeState, setResumeState] = useState<Keyed<ResumeRecord | null>>(null);
   const [analysisState, setAnalysisState] = useState<Keyed<ResumeAnalysis | null>>(null);
   const [gapState, setGapState] = useState<Keyed<RoleGapResult | null>>(null);
@@ -112,8 +93,6 @@ export default function InsightsPanel() {
 
   const [now, setNow] = useState(() => Date.now());
 
-  // Same approach as ResumeList: a ticking value ages "just now" into
-  // "2 minutes ago" without needing a navigation.
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 30_000);
     return () => clearInterval(timer);
@@ -125,7 +104,6 @@ export default function InsightsPanel() {
     return subscribeToResumes(user.uid, {
       onData: (next) => {
         setResumes(next);
-        // Default to the newest edit, and recover if the selection is deleted.
         setResumeId((current) =>
           current && next.some((entry) => entry.id === current)
             ? current
@@ -157,18 +135,11 @@ export default function InsightsPanel() {
     () => hashText(serializeBlocks(blocks)),
     [blocks],
   );
-
-  // Read by the analysis subscription when a snapshot lands, so stored
-  // citations are always filtered against the resume as it is now.
   const blockIdsRef = useRef<string[]>([]);
   useEffect(() => {
     blockIdsRef.current = blocks.map((block) => block.id);
   }, [blocks]);
 
-  // `sourceHash` is a dependency on purpose: the analysis document can arrive
-  // before the resume document, and citations filtered against an empty block
-  // set would leave the evidence panel blank for the rest of the session.
-  // Re-subscribing when the text changes re-normalizes against the real ids.
   useEffect(() => {
     if (!user || !resumeId) return;
 
@@ -307,8 +278,7 @@ export default function InsightsPanel() {
           )}
 
           {analysis && (
-            // Held at reduced opacity while re-running rather than replaced by a
-            // skeleton: no layout jump, and the old numbers stay readable.
+
             <div
               className={`flex flex-col gap-5 transition-opacity ${
                 analysing ? "opacity-50" : ""
@@ -327,7 +297,7 @@ export default function InsightsPanel() {
                     type="button"
                     onClick={() => setView(option.id)}
                     aria-pressed={view === option.id}
-                    className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
+                    className={`rounded-md border px-3 py-1.5 text-xs font transition-colors ${
                       view === option.id
                         ? "border-accent bg-accent-subtle text-accent"
                         : "border-zinc-200 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:text-zinc-400"

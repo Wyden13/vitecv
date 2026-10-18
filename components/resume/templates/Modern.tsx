@@ -19,20 +19,6 @@ import {
   visibleSkillGroups,
 } from "./shared";
 
-/**
- * Modern — tinted sidebar for identity and skills, main column for history.
- *
- * The sidebar runs full-bleed to the paper edge, so the registry entry zeroes
- * `.doc-page`'s padding (`--page-pad-*`) and this supplies its own insets per
- * column. `print-color-adjust` keeps the tint from being dropped by browsers
- * that strip backgrounds when printing.
- *
- * The split is by layout, not by heading: the sidebar takes every `skills`
- * section — so an added "Languages" lands there without this file knowing the
- * heading exists — and the main column takes everything else in document
- * order.
- */
-
 function MainHeading({ children }: { children: string }) {
   if (!children.trim()) return null;
 
@@ -111,7 +97,6 @@ function TimelineBody({ entries }: { entries: TimelineEntry[] }) {
   );
 }
 
-/** Bulleted list, sharing the accent dot the timeline bullets use. */
 function ListBody({ items }: { items: string[] }) {
   return (
     <ul className="mt-2 space-y-1 text-[length:calc(var(--tpl-body-size)_-_0.5pt)] leading-snug text-zinc-800">

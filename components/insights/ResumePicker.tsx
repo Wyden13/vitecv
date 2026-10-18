@@ -3,14 +3,6 @@
 import { formatRelativeTime } from "@/libs/formatRelativeTime";
 import type { ResumeSummary } from "@/libs/resume/resumeService";
 
-/**
- * Which resume is being analysed.
- *
- * A native select rather than a custom menu: it is one choice from a short
- * list, and the platform control already handles keyboard, touch and screen
- * readers better than anything hand-rolled here would.
- */
-
 export interface ResumePickerProps {
   resumes: ResumeSummary[];
   value: string | null;

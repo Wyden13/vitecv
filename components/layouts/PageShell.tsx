@@ -17,7 +17,7 @@ export default function PageShell({
     <div className="flex min-h-full flex-col">
       <Topbar header={header}>{actions}</Topbar>
       {progress}
-      <div className="flex-1 px-6 py-5">{children}</div>
+      <div className="flex-1 px-6 py-5 bg-gray-50">{children}</div>
     </div>
   );
 }

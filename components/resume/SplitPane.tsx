@@ -44,10 +44,6 @@ export default function SplitPane({
   const containerRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [override, setOverride] = useState<number | null>(null);
-
-  // localStorage is an external store, so read it through the API built for
-  // one: the server snapshot keeps the first client render matching the HTML,
-  // which a read inside an effect would not.
   const stored = useSyncExternalStore(
     subscribeToStorage,
     useCallback(() => window.localStorage.getItem(storageKey), [storageKey]),

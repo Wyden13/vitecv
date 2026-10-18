@@ -19,20 +19,7 @@ import {
   visibleSkillGroups,
 } from "./shared";
 
-/**
- * Classic — single column, rules under headings, no graphics.
- *
- * The conservative, ATS-safe default. Type sizes are in points because the
- * page is a real 8.5×11in sheet, so they mean the same thing on screen and on
- * paper. Colour is confined to the heading rules and links, which keeps the
- * layout readable when an accent is printed in greyscale.
- *
- * Every layout sits under the same ruled heading, so a custom section is
- * indistinguishable from a built-in one on the page.
- */
-
 function SectionHeading({ children }: { children: string }) {
-  // A blank heading is a valid choice — print the content without one.
   if (!children.trim()) return null;
 
   return (

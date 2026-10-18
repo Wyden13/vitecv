@@ -4,11 +4,12 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Green — primary accent / recommended emphasis */
-  --accent: #047857;
-  --accent-subtle: #ecfdf5;
-  --accent-subtle-hover: #d1fae5;
-  --accent-border: #a7f3d0;
+  /* Sky blue — primary accent / recommended emphasis */
+  --accent: #0369a1; /* sky-700 */
+  --accent-hover: #075985; /* sky-800 — solid fills on hover */
+  --accent-subtle: #f0f9ff; /* sky-50 */
+  --accent-subtle-hover: #e0f2fe; /* sky-100 */
+  --accent-border: #bae6fd; /* sky-200 */
 
   /* Dark orange — secondary accent */
   --accent-alt: #c2410c;
@@ -22,6 +23,7 @@
   --color-foreground: var(--foreground);
 
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-subtle: var(--accent-subtle);
   --color-accent-subtle-hover: var(--accent-subtle-hover);
   --color-accent-border: var(--accent-border);
@@ -31,7 +33,7 @@
   --color-accent-alt-subtle-hover: var(--accent-alt-subtle-hover);
   --color-accent-alt-border: var(--accent-alt-border);
 
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-source-serif);
 }
@@ -75,10 +77,13 @@
     --background: #282a36;
     --foreground: #f8f8f2;
 
-    --accent: #50fa7b; /* Dracula green */
-    --accent-subtle: #22352c;
-    --accent-subtle-hover: #2b4536;
-    --accent-border: #3e6b4f;
+    --accent: #8be9fd; /* Dracula cyan */
+    /* Dark fills are bright with dark text, so hover dims rather than
+       darkens — the same direction as zinc-50 → zinc-200. */
+    --accent-hover: #66d3ee;
+    --accent-subtle: #1e3540;
+    --accent-subtle-hover: #27485a;
+    --accent-border: #3d6e85;
 
     --accent-alt: #ffb86c; /* Dracula orange */
     --accent-alt-subtle: #3a2e20;

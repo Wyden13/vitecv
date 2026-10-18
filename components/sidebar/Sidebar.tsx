@@ -21,11 +21,11 @@ export default function Sidebar() {
   return (
     <nav
       aria-label="Main"
-      className="flex h-full w-48 shrink-0 flex-col border-r border-zinc-200 p-3 dark:border-zinc-800 print:hidden"
+      className="flex h-full w-48 shrink-0 flex-col border-r border-accent-border bg-accent-subtle/50 p-3 print:hidden"
     >
       <Link
         href="/dashboard"
-        className="mb-2 px-3 py-2 text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50"
+        className="mb-2 px-3 py-2 text-sm font-semibold tracking-tight text-accent"
       >
         viteCV
       </Link>

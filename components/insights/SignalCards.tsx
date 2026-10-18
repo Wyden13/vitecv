@@ -9,19 +9,6 @@ import type { TextBlock } from "@/libs/insights/resumeText";
 import Meter from "../Meter";
 import StatTile from "../StatTile";
 
-/**
- * The headline numbers, plus the writing problems worth fixing.
- *
- * Four related figures are a KPI row, not a chart — a grouped bar of
- * "keywords / categories / bullets / phrases" would compare quantities that
- * share no unit. The quantified share is the one ratio here, so it gets a
- * meter.
- *
- * There is deliberately no overall "resume score": nothing in this data
- * justifies one, and a made-up number out of 100 would be the most trusted and
- * least earned thing on the page.
- */
-
 export interface SignalCardsProps {
   keywords: Keyword[];
   signals: WritingSignals;

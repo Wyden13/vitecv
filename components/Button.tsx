@@ -9,23 +9,22 @@ export type ButtonSize = "sm" | "md" | "lg";
 export interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  /** Reserved for a future icon library; unused today. */
   icon?: React.ReactNode;
 }
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors " +
-  "focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 " +
+  "inline-flex items-center justify-center gap-2 rounded-md font-bold transition-colors " +
+  "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 " +
   "focus-visible:ring-offset-background focus-visible:outline-none " +
-  "disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-zinc-100";
+  "disabled:pointer-events-none disabled:opacity-50";
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200",
+    "bg-accent text-white hover:bg-accent-hover dark:text-zinc-950",
   secondary:
     "border border-zinc-200 text-zinc-900 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-900",
   ghost:
-    "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50",
+    "text-zinc-600 hover:bg-accent-subtle hover:text-accent dark:text-zinc-400",
   soft: "bg-accent-subtle text-accent hover:bg-accent-subtle-hover",
   softAlt:
     "bg-accent-alt-subtle text-accent-alt hover:bg-accent-alt-subtle-hover",

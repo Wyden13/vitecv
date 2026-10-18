@@ -110,11 +110,6 @@ export default function ResumeList() {
             </span>
 
             <div className="min-w-0 flex-1">
-              {/*
-                The ::after overlay makes the whole row clickable without
-                nesting the delete button inside an anchor, which would be
-                invalid markup and unreachable by keyboard.
-              */}
               <Link
                 href={`/resume/${resume.id}`}
                 className="text-sm font-medium text-zinc-900 after:absolute after:inset-0 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:text-zinc-50 dark:focus-visible:ring-zinc-100"

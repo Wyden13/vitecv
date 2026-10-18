@@ -8,23 +8,6 @@ import {
 } from "@/libs/insights/insightSchema";
 import type { TextBlock } from "@/libs/insights/resumeText";
 
-/**
- * The three ways to read the same keyword weights.
- *
- * Two deliberate restraints, both from the dataviz rules:
- *
- * 1. **Category is identity, carried by the heading — not by hue.** Seven
- *    categories would mean inventing seven hues that survive colour-blindness
- *    on white *and* on the Dracula dark surface. Grouping does it for free.
- *
- * 2. **Weight gets exactly one visual channel.** Bar length in the ranked view,
- *    chip size in the cloud. Tinting by weight on top of either would
- *    double-encode what the shape already says and burn the one free channel.
- *
- * The table is not a fallback — it is the accessible twin, where every weight
- * is plain text. Nothing here is readable only on hover.
- */
-
 export type KeywordView = "cloud" | "ranked" | "table";
 
 export const KEYWORD_VIEWS: { id: KeywordView; label: string }[] = [
