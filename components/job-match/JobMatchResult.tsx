@@ -15,6 +15,7 @@ import {
   MapPinIcon,
   SpinnerIcon,
 } from "../icons";
+import ViewSwitcher from "../ViewSwitcher";
 import ImproveGuideline from "./ImproveGuideline";
 import JobDetail from "./JobDetail";
 import JobMatchAnalysis from "./JobMatchAnalysis";
@@ -138,23 +139,12 @@ export default function JobMatchResult({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5">
-        {MATCH_VIEWS.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            onClick={() => setView(option.id)}
-            aria-pressed={view === option.id}
-            className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
-              view === option.id
-                ? "border-accent bg-accent-subtle text-accent"
-                : "border-zinc-200 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:text-zinc-400"
-            }`}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+      <ViewSwitcher
+        options={MATCH_VIEWS}
+        value={view}
+        onChange={setView}
+        label="Result views"
+      />
 
       {view === "detail" ? (
         <JobDetail sections={result.sections} description={description} />

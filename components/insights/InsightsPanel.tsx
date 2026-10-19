@@ -26,6 +26,7 @@ import {
 import Button from "../Button";
 import { SpinnerIcon } from "../icons";
 import { useToast } from "../Toast";
+import ViewSwitcher from "../ViewSwitcher";
 import EvidencePanel from "./EvidencePanel";
 import KeywordViews, {
   KEYWORD_VIEWS,
@@ -290,23 +291,12 @@ export default function InsightsPanel() {
                 blocks={blockMap}
               />
 
-              <div className="flex flex-wrap gap-1.5">
-                {KEYWORD_VIEWS.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => setView(option.id)}
-                    aria-pressed={view === option.id}
-                    className={`rounded-md border px-3 py-1.5 text-xs font transition-colors ${
-                      view === option.id
-                        ? "border-accent bg-accent-subtle text-accent"
-                        : "border-zinc-200 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:text-zinc-400"
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
+              <ViewSwitcher
+                options={KEYWORD_VIEWS}
+                value={view}
+                onChange={setView}
+                label="Keyword views"
+              />
 
               <div className="grid gap-5 lg:grid-cols-[1fr_18rem]">
                 <KeywordViews
