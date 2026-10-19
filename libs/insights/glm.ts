@@ -6,11 +6,6 @@ const DEFAULT_BASE_URL = "https://api.z.ai/api";
 const DEFAULT_MODEL = "glm-5.3-flash";
 const DEFAULT_REASONING_EFFORT = "low";
 const TIMEOUT_MS = 90_000;
-
-/**
- * Fixed, not per-request — a rotating seed would defeat the point. Paired with
- * `do_sample: false` below, which is the switch that actually matters.
- */
 const DETERMINISM_SEED = 7;
 
 export interface GlmResult {

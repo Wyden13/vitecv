@@ -92,7 +92,6 @@ export default function TimelineFields({
               </div>
             )}
 
-            {/* Only presets that declare the label offer the field. */}
             {labels.url && (
               <div className="sm:col-span-2">
                 <Field

@@ -14,3 +14,19 @@ export function formatRelativeTime(from: Date, now: number): string {
   const days = Math.round(hours / 24);
   return days === 1 ? "yesterday" : `${days} days ago`;
 }
+
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+export function formatIsoDate(iso: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso.trim());
+  if (!match) return iso;
+
+  const [, year, month, day] = match;
+  const name = MONTHS[Number(month) - 1];
+  if (!name) return iso;
+
+  return `${Number(day)} ${name} ${year}`;
+}

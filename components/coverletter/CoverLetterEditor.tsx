@@ -47,8 +47,6 @@ export default function CoverLetterEditor({
   const [missing, setMissing] = useState(false);
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Set while the user is editing, so incoming snapshots (including the echo
-  // of our own write) don't clobber in-flight keystrokes.
   const dirty = useRef(false);
 
   useEffect(() => {

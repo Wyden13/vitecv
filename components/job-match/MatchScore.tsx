@@ -32,16 +32,6 @@ function Tally({
   );
 }
 
-/**
- * The headline fit number.
- *
- * Deliberately a hero number over a meter rather than the two-segment donut the
- * inspiration used: a single ratio against a limit is a meter, and a two-slice
- * pie is the canonical way to make one value harder to read than printing it.
- *
- * The bar tracks the weighted score, not the raw count, so the number and the
- * fill always agree — the count is context, and lives in the caption.
- */
 export default function MatchScore({ value }: MatchScoreProps) {
   const { score, matched, total } = value;
 

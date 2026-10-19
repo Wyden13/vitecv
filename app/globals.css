@@ -5,7 +5,7 @@
   --foreground: #171717;
 
   /* Sky blue — primary accent / recommended emphasis */
-  --accent: #0369a1; /* sky-700 */
+  --accent: #0A66C2; /* sky-700 */
   --accent-hover: #075985; /* sky-800 — solid fills on hover */
   --accent-subtle: #f0f9ff; /* sky-50 */
   --accent-subtle-hover: #e0f2fe; /* sky-100 */
@@ -16,6 +16,17 @@
   --accent-alt-subtle: #fff7ed;
   --accent-alt-subtle-hover: #ffedd5;
   --accent-alt-border: #fed7aa;
+
+  /* Pipeline states — the job tracker's status badges need two hues the
+     sky/orange pair cannot carry. Checked as subtle-bg + strong-text pairs:
+     4.79:1 (good) and 4.84:1 (warn), both clearing AA. */
+  --accent-good: #15803d;
+  --accent-good-subtle: #f0fdf4;
+  --accent-good-border: #bbf7d0;
+
+  --accent-warn: #b45309;
+  --accent-warn-subtle: #fffbeb;
+  --accent-warn-border: #fde68a;
 }
 
 @theme inline {
@@ -33,25 +44,19 @@
   --color-accent-alt-subtle-hover: var(--accent-alt-subtle-hover);
   --color-accent-alt-border: var(--accent-alt-border);
 
+  --color-accent-good: var(--accent-good);
+  --color-accent-good-subtle: var(--accent-good-subtle);
+  --color-accent-good-border: var(--accent-good-border);
+
+  --color-accent-warn: var(--accent-warn);
+  --color-accent-warn-subtle: var(--accent-warn-subtle);
+  --color-accent-warn-border: var(--accent-warn-border);
+
   --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-source-serif);
 }
 
-/* ---------------------------------------------------------------------------
-   Dracula — dark theme only. Light mode above is untouched.
-
-   Dark surfaces across the app are written as hardcoded utilities
-   (`dark:bg-zinc-900`, `dark:text-zinc-400`, …) rather than the semantic
-   tokens — 89 of them. Tailwind vow  compiles those to `var(--color-zinc-*)`,
-   so re-tinting the ramp here converts every one of them at once instead of
-   editing 22 component files.
-
-   The ramp keeps its light-to-dark direction, so existing pairings like
-   `text-zinc-900 dark:text-zinc-50` still read correctly — the greys simply
-   gain Dracula's blue-violet cast. That also keeps the resume preview's
-   `text-zinc-900` dark on its white paper.
-   --------------------------------------------------------------------------- */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -59,9 +64,7 @@
     --color-zinc-100: #eaeaf2;
     --color-zinc-200: #d2d4e4;
     --color-zinc-300: #b6bad2;
-    /* Deliberately NOT Dracula's comment colour: #6272a4 on #282a36 is
-       3.03:1, and this step carries the app's muted body text (21 uses).
-       #9ba3c7 clears 4.5:1 at 5.74:1. */
+
     --color-zinc-400: #9ba3c7;
     --color-zinc-500: #7e88b0;
     --color-zinc-600: #6272a4; /* Dracula comment — de-emphasised use only */
@@ -89,6 +92,14 @@
     --accent-alt-subtle: #3a2e20;
     --accent-alt-subtle-hover: #4a3a28;
     --accent-alt-border: #6b4f33;
+
+    --accent-good: #50fa7b; /* Dracula green */
+    --accent-good-subtle: #1e3a28;
+    --accent-good-border: #3d7a52;
+
+    --accent-warn: #f1fa8c; /* Dracula yellow */
+    --accent-warn-subtle: #3a3420;
+    --accent-warn-border: #6b6333;
   }
 }
 

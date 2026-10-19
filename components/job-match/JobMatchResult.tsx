@@ -20,6 +20,7 @@ import ImproveGuideline from "./ImproveGuideline";
 import JobDetail from "./JobDetail";
 import JobMatchAnalysis from "./JobMatchAnalysis";
 import MatchScore from "./MatchScore";
+import TrackJobButton from "./TrackJobButton";
 import { CARD } from "./shared";
 
 export interface JobMatchResultProps {
@@ -128,14 +129,18 @@ export default function JobMatchResult({
 
   const matched = result.items.filter((item) => item.present);
   const missing = result.items.filter((item) => !item.present);
+  const score = matchScore(result.items);
 
   return (
     <div className="flex w-full flex-col gap-4">
       {/* Fixed across all three views. */}
       <div className={`${CARD} flex flex-wrap items-start justify-between gap-6`}>
-        <JobSummary job={result.job} />
+        <div className="flex flex-col items-start gap-3">
+          <JobSummary job={result.job} />
+          <TrackJobButton job={result.job} score={score.score} />
+        </div>
         <div className="min-w-56 flex-1">
-          <MatchScore value={matchScore(result.items)} />
+          <MatchScore value={score} />
         </div>
       </div>
 

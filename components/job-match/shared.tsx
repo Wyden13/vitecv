@@ -8,11 +8,6 @@ import { AlertTriangleIcon, CheckIcon } from "../icons";
 export const CARD =
   "rounded-lg border border-zinc-200 bg-background p-5 dark:border-zinc-800";
 
-/**
- * A single keyword, coloured by whether the resume evidences it: accent for
- * present, the orange alt for missing. Shared by the analysis columns and the
- * improvement tiers.
- */
 export function Chip({ item }: { item: RoleGapItem }) {
   const Icon = item.present ? CheckIcon : AlertTriangleIcon;
 

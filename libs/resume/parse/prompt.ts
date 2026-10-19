@@ -1,18 +1,8 @@
 import type { ChatMessage } from "@/libs/insights/prompts";
 import { SECTION_PRESETS } from "@/libs/resume/sectionPresets";
 
-/**
- * The structuring prompt and the JSON contract it promises.
- *
- * As with the Insights prompts, `json_object` is all GLM offers, so the shape
- * here is intent, not guarantee: `normalizeParsedResume` re-checks every value
- * against the uploaded text and drops anything the model reworded.
- */
-
 function presetGuide(): string {
   return SECTION_PRESETS.map((preset) => {
-    // Timeline presets no longer all carry the same fields, so list the ones
-    // this preset actually offers rather than printing "meta=undefined".
     const fields =
       preset.layout === "timeline"
         ? ` (${[

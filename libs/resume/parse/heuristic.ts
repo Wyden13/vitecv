@@ -7,17 +7,6 @@ import {
 
 import { TOKEN } from "./contacts";
 
-/**
- * Local, no-network structuring for when GLM is unavailable (no key, timeout,
- * rate limit) or returns nothing usable. It reads headings, bullets and date
- * lines off the text and only ever slices source lines, so its output passes
- * the verbatim check by construction; layouts it misreads still end up intact
- * in "Other" via the coverage check, never lost.
- *
- * Output has the same loose shape GLM returns, so both go through
- * `normalizeParsedResume`.
- */
-
 interface RawEntry {
   title: string;
   subtitle: string;
@@ -102,7 +91,6 @@ function headingKey(line: string): string {
   return line.trim().replace(/[:：]$/, "").replace(/\s+/g, " ").toLowerCase();
 }
 
-/** Known heading → preset id; an unknown short ALL-CAPS line → "" (custom). */
 function detectHeading(line: string): string | null {
   const trimmed = line.trim();
   if (!trimmed || trimmed.length > 40 || GLYPH.test(trimmed)) return null;
@@ -120,7 +108,6 @@ function detectHeading(line: string): string | null {
   return isCaps ? "" : null;
 }
 
-/** Splits a line around its date, returning the non-empty sides trimmed of separators. */
 function sides(line: string, match: RegExpMatchArray): string[] {
   const at = match.index ?? 0;
   return [line.slice(0, at), line.slice(at + match[0].length)]
@@ -132,7 +119,6 @@ function emptyEntry(): RawEntry {
   return { title: "", subtitle: "", meta: "", start: "", end: "", bullets: [] };
 }
 
-/** "Acme | Engineer" or a wide gap between columns separates fields. */
 const FIELD_SEPARATOR = /\s+[|·]\s+|\s{3,}/;
 
 function fill(entry: RawEntry, text: string) {
@@ -170,8 +156,6 @@ function parseTimeline(lines: string[]): RawEntry[] {
     const date = range ?? single;
     const dated = !!current && (!!current.start || !!current.end);
 
-    // A new entry starts at a dated line once the current one is dated, or at
-    // any line once the current one has bullets.
     let target = current;
     if (!target || target.bullets.length > 0 || (date && dated)) {
       target = emptyEntry();
@@ -208,7 +192,6 @@ function parseSkills(lines: string[]) {
   });
 }
 
-/** Bullets become items; a non-bullet line after a bullet continues it. */
 function parseList(lines: string[]): string[] {
   const items: string[] = [];
   let lastWasBullet = false;
@@ -228,7 +211,6 @@ function parseList(lines: string[]): string[] {
   return items;
 }
 
-/** Layout for a heading we do not recognise, guessed from its content. */
 function guessLayout(lines: string[]): SectionLayout {
   if (lines.some((line) => RANGE.test(line))) return "timeline";
   if (lines.some((line) => GLYPH.test(line))) return "list";
@@ -295,15 +277,12 @@ export function heuristicStructure(redactedText: string): {
   }
   close();
 
-  // Name is the first plain header line; a short line after it is the title.
-  // Whatever else sits in the header is left for the coverage check.
   const plain = header.map((line) => line.trim()).filter((line) => line && !hasToken(line));
   if (plain[0] && plain[0].split(/\s+/).length <= 6) profile.name = plain[0];
   if (plain[1] && plain[1].split(/\s+/).length <= 8 && !/\d/.test(plain[1])) {
     profile.title = plain[1];
   }
 
-  // Location usually shares the contact line: "Hanoi, Vietnam | [EMAIL1] | …".
   profile.location =
     header
       .filter(hasToken)

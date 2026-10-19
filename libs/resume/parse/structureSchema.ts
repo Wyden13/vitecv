@@ -24,9 +24,7 @@ import { restoreTokens, TOKEN, type RedactedText } from "./contacts";
 
 export interface ParsedResume {
   document: ResumeDocument;
-  /** Values thrown out by the verbatim check. */
   dropped: number;
-  /** Source lines that ended up in "Other". */
   leftovers: number;
 }
 
@@ -40,10 +38,6 @@ function isWordChar(char: string | undefined): boolean {
   return !!char && /[\p{L}\p{N}]/u.test(char);
 }
 
-/**
- * Source text flattened to one searchable string, with a coverage mark per
- * character and each line's span kept so marks map back to lines.
- */
 class SourceIndex {
   private readonly hay: string;
   private readonly covered: Uint8Array;
@@ -68,7 +62,6 @@ class SourceIndex {
     this.covered = new Uint8Array(this.hay.length);
   }
 
-  /** Word-bounded occurrences, so "Go" does not claim the "Go" in "Google". */
   private occurrences(needle: string): number[] {
     const found: number[] = [];
     const boundedStart = isWordChar(needle[0]);

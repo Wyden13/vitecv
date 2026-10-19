@@ -9,7 +9,6 @@ import Button from "../Button";
 import { PlusIcon } from "../icons";
 import { useToast } from "../Toast";
 
-/** Client island, for the same reason as CreateResumeButton. */
 export default function CreateCoverLetterButton() {
   const router = useRouter();
   const { user, loading } = useFirebaseUser();

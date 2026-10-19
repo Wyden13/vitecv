@@ -7,7 +7,6 @@ import { CARD, SectionHeading } from "./shared";
 
 export interface JobDetailProps {
   sections: JobSections;
-  /** The posting the match was run against, verbatim. */
   description: string;
 }
 
@@ -27,8 +26,6 @@ function RawPosting({ description }: { description: string }) {
 }
 
 export default function JobDetail({ sections, description }: JobDetailProps) {
-  // Nothing parsed and nothing pasted — only reachable for a stored match whose
-  // posting text this session never saw.
   if (!hasJobSections(sections) && !description.trim()) {
     return (
       <div className={`${CARD} text-sm text-zinc-500 dark:text-zinc-400`}>
@@ -37,9 +34,6 @@ export default function JobDetail({ sections, description }: JobDetailProps) {
       </div>
     );
   }
-
-  // A posting the model could not segment, or a match cached before sections
-  // existed: show the posting itself rather than four empty headings.
   if (!hasJobSections(sections)) {
     return (
       <div className={`${CARD} flex flex-col gap-2`}>

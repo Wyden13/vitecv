@@ -52,9 +52,7 @@ export interface TimelineEntry {
   meta: string;
   start: string;
   end: string;
-  /** Free prose. Empty unless the preset offers the field. */
   description: string;
-  /** Project or credential link. Empty unless the preset offers the field. */
   url: string;
   bullets: string[];
 }

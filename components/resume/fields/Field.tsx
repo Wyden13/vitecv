@@ -12,7 +12,7 @@ export interface FieldProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  type?: "text" | "email" | "tel" | "url";
+  type?: "text" | "email" | "tel" | "url" | "date";
 }
 
 export function Field({

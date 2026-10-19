@@ -111,7 +111,6 @@ export default function JobDescriptionUpload({
           if (!blocked) setDragging(true);
         }}
         onDragLeave={(event) => {
-          // Ignore the events that bubble up from children.
           if (
             !event.currentTarget.contains(event.relatedTarget as Node | null)
           ) {

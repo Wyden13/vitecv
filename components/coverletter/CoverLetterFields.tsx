@@ -45,8 +45,6 @@ function BodyField({
   onChange: (next: string[]) => void;
 }) {
   const [text, setText] = useState(() => bodyToText(body));
-  // Identity of the array we last pushed up. A different one means the change
-  // came from elsewhere — a snapshot, a reset — and should replace our text.
   const pushed = useRef(body);
 
   useEffect(() => {

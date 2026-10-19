@@ -21,9 +21,6 @@ export default function CoverLetterList() {
   const [error, setError] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  // Ticked rather than read during render, which would be impure and would
-  // leave "just now" frozen until the next navigation. Same as ResumeList.
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
