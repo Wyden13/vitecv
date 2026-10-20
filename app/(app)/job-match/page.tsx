@@ -13,6 +13,7 @@ import ResumePicker from "@/components/insights/ResumePicker";
 import { TextAreaField } from "@/components/resume/fields/Field";
 import { useToast } from "@/components/Toast";
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
+import { takeHandoff } from "@/libs/handoff";
 import { hashText, type JobMatchPayload } from "@/libs/insights/insightSchema";
 import {
   readJobMatch,
@@ -40,7 +41,11 @@ export default function JobMatchPage() {
   const { user } = useFirebaseUser();
   const { notify } = useToast();
 
-  const [description, setDescription] = useState("");
+  // Seeded from the dashboard composer when it routed a pasted posting here.
+  // Read in the initialiser rather than an effect — see `libs/handoff.ts`.
+  const [description, setDescription] = useState(
+    () => takeHandoff()?.jobDescription ?? "",
+  );
 
   const [resumes, setResumes] = useState<ResumeSummary[] | null>(null);
   const [resumeId, setResumeId] = useState<string | null>(null);

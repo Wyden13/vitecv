@@ -5,30 +5,15 @@ import { useRouter } from "next/navigation";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
 import { extractFileText } from "@/libs/extractFile";
+import {
+  ALLOWED_EXTENSIONS,
+  validateUpload as validate,
+} from "@/libs/uploadFile";
 import { importResumeText } from "@/libs/resume/parse/importResume";
 import { createResume } from "@/libs/resume/resumeService";
 import { UploadIcon } from "./icons";
 import { useToast } from "./Toast";
 import { useUploadProgress } from "./UploadProgress";
-
-const ALLOWED_EXTENSIONS = [".pdf", ".docx"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-
-function validate(file: File): string | null {
-  const extension = file.name
-    .substring(file.name.lastIndexOf("."))
-    .toLowerCase();
-
-  if (!ALLOWED_EXTENSIONS.includes(extension)) {
-    return "Only PDF and DOCX files are allowed.";
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    return "File size must be less than 5 MB.";
-  }
-
-  return null;
-}
 
 export default function ResumeUpload() {
   const router = useRouter();

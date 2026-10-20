@@ -190,7 +190,7 @@ export default function JobTrackerBoard({
     };
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-2">
+    <div className="flex gap-3 overflow-x-auto p-2 pb-8">
       {JOB_STATUSES.map((status) => {
         const column = applications.filter((entry) => entry.status === status);
         const isTarget =

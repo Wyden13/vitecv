@@ -33,14 +33,10 @@ function toInput(application: JobApplication | null): JobApplicationInput {
     status: application.status,
     matchScore: application.matchScore,
     nextAction: application.nextAction,
+    url: application.url,
   };
 }
 
-/**
- * The panel is only mounted while open; the page owns the trigger button, and
- * keys this component by the row being edited so switching rows remounts it
- * with a fresh draft rather than syncing one through an effect.
- */
 export default function JobTrackerForm({
   editing,
   saving,
@@ -124,6 +120,14 @@ export default function JobTrackerForm({
             );
           }}
           placeholder="0–100"
+        />
+        <Field
+          label="URL"
+          value={draft.url === null ? "" : String(draft.url)}
+          onChange={(value) =>
+            set("url", value.trim())
+          }
+        placeholder="Link your job"
         />
 
         <div className="flex flex-col gap-1 sm:col-span-2">

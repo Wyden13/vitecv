@@ -10,6 +10,8 @@ export interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   icon?: React.ReactNode;
+  /** Rendered after the label — `BASE`'s gap-2 spaces it. */
+  iconRight?: React.ReactNode;
 }
 
 const BASE =
@@ -40,6 +42,7 @@ export default function Button({
   variant = "primary",
   size = "md",
   icon,
+  iconRight,
   className,
   type = "button",
   children,
@@ -55,6 +58,7 @@ export default function Button({
     >
       {icon}
       {children}
+      {iconRight}
     </button>
   );
 }

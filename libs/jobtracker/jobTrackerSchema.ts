@@ -33,6 +33,7 @@ export interface JobApplication {
   matchScore: number | null;
   nextAction: string;
   updatedAt: Date | null;
+  url: string;
 }
 
 export type JobApplicationInput = Omit<JobApplication, "id" | "updatedAt">;
@@ -71,6 +72,7 @@ export function createEmptyJobApplication(): JobApplicationInput {
     status: DEFAULT_JOB_STATUS,
     matchScore: null,
     nextAction: "",
+    url:"",
   };
 }
 
@@ -92,5 +94,6 @@ export function normalizeJobApplication(
     matchScore: score === null ? null : clamp(score, 0, 100),
     nextAction: text(raw.nextAction),
     updatedAt,
+    url: text(raw.url),
   };
 }

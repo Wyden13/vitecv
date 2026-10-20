@@ -191,3 +191,20 @@ export function BanknoteIcon(props: IconProps) {
     </StrokeIcon>
   );
 }
+
+export function ArrowUpIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M12 19V5M5.5 11.5 12 5l6.5 6.5" />
+    </StrokeIcon>
+  );
+}
+
+export function SparkleIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M12 3.5 13.7 9 19 10.7 13.7 12.4 12 18l-1.7-5.6L5 10.7 10.3 9 12 3.5Z" />
+      <path d="M18.5 16.5 19 18.5l2 .5-2 .5-.5 2-.5-2-2-.5 2-.5.5-2Z" />
+    </StrokeIcon>
+  );
+}

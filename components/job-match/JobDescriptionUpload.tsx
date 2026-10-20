@@ -3,27 +3,13 @@
 import { useState, type ChangeEvent, type DragEvent } from "react";
 
 import { extractFileText } from "@/libs/extractFile";
+import {
+  ALLOWED_EXTENSIONS,
+  UPLOAD_HINT,
+  validateUpload as validate,
+} from "@/libs/uploadFile";
 import { SpinnerIcon, UploadIcon } from "../icons";
 import { useToast } from "../Toast";
-
-const ALLOWED_EXTENSIONS = [".pdf", ".docx"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-
-function validate(file: File): string | null {
-  const extension = file.name
-    .substring(file.name.lastIndexOf("."))
-    .toLowerCase();
-
-  if (!ALLOWED_EXTENSIONS.includes(extension)) {
-    return "Only PDF and DOCX files are allowed.";
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    return "File size must be less than 5 MB.";
-  }
-
-  return null;
-}
 
 export interface JobDescriptionUploadProps {
   onText: (text: string) => void;
@@ -133,7 +119,7 @@ export default function JobDescriptionUpload({
         )}
         <span className="font-medium">{busy ? "Reading…" : "Upload"}</span>
         <span className="text-xs text-zinc-500 dark:text-zinc-400">
-          PDF or DOCX, up to 5 MB
+          {UPLOAD_HINT}
         </span>
 
         <input
