@@ -22,12 +22,6 @@ import {
 } from "@/libs/insights/resumeText";
 
 const MAX_CHARS = 20_000;
-
-/**
- * Roomier than the 6k `analyzeRoleGap` allows a target role: this path always
- * gets a whole posting, and the metadata it extracts is usually in the preamble
- * and the boilerplate at the end.
- */
 const MAX_JD_CHARS = 12_000;
 
 function capBlocks(blocks: TextBlock[]): TextBlock[] {
@@ -89,10 +83,6 @@ export async function analyzeRoleGap(
   return { ...normalizeGapPayload(data), model };
 }
 
-/**
- * Job Match: the same gap comparison as `analyzeRoleGap`, but against a whole
- * posting and returning what the posting says about itself alongside the gap.
- */
 export async function matchJob(
   blocks: TextBlock[],
   description: string,

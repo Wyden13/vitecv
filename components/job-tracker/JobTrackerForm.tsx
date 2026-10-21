@@ -13,7 +13,7 @@ import {
 
 import Button from "../Button";
 import { XIcon } from "../icons";
-import { Field } from "../resume/fields/Field";
+import { Field, TextAreaField } from "../resume/fields/Field";
 
 export interface JobTrackerFormProps {
   editing: JobApplication | null;
@@ -34,6 +34,13 @@ function toInput(application: JobApplication | null): JobApplicationInput {
     matchScore: application.matchScore,
     nextAction: application.nextAction,
     url: application.url,
+
+    // Carried through so editing a job clipped by the extension cannot
+    // quietly drop what it saved.
+    description: application.description,
+    employmentType: application.employmentType,
+    datePosted: application.datePosted,
+    source: application.source,
   };
 }
 
@@ -129,6 +136,16 @@ export default function JobTrackerForm({
           }
         placeholder="Link your job"
         />
+
+        <div className="sm:col-span-2">
+          <TextAreaField
+            label="Description"
+            value={draft.description}
+            onChange={(value) => set("description", value)}
+            placeholder="Pasted or clipped from the posting"
+            rows={6}
+          />
+        </div>
 
         <div className="flex flex-col gap-1 sm:col-span-2">
           <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">

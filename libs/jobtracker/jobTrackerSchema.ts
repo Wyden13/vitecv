@@ -34,11 +34,21 @@ export interface JobApplication {
   nextAction: string;
   updatedAt: Date | null;
   url: string;
+
+  /**
+   * Filled in by the browser extension. `datePosted` is when the employer
+   * posted the job, which is not `appliedDate` — that one means when *you*
+   * applied, and nothing should ever infer it from a posting.
+   */
+  description: string;
+  employmentType: string | null;
+  datePosted: string | null;
+  source: string;
 }
 
 export type JobApplicationInput = Omit<JobApplication, "id" | "updatedAt">;
 
-function text(value: unknown): string {
+export function text(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
@@ -57,7 +67,7 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, Math.round(value)));
 }
 
-function asStatus(value: unknown): JobApplicationStatus {
+export function asStatus(value: unknown): JobApplicationStatus {
   return (
     JOB_STATUSES.find((candidate) => candidate === value) ?? DEFAULT_JOB_STATUS
   );
@@ -73,6 +83,10 @@ export function createEmptyJobApplication(): JobApplicationInput {
     matchScore: null,
     nextAction: "",
     url:"",
+    description: "",
+    employmentType: null,
+    datePosted: null,
+    source: "",
   };
 }
 
@@ -95,5 +109,9 @@ export function normalizeJobApplication(
     nextAction: text(raw.nextAction),
     updatedAt,
     url: text(raw.url),
+    description: text(raw.description),
+    employmentType: text(raw.employmentType) || null,
+    datePosted: text(raw.datePosted) || null,
+    source: text(raw.source),
   };
 }
