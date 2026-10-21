@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import ExtensionPairing from "@/components/job-tracker/ExtensionPairing";
 import JobTrackerBoard from "@/components/job-tracker/JobTrackerBoard";
 import JobTrackerForm from "@/components/job-tracker/JobTrackerForm";
 import JobTrackerList from "@/components/job-tracker/JobTrackerList";
@@ -162,6 +163,10 @@ export default function JobTrackerPage() {
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
           Every role you are chasing, and what you owe it next.
         </p>
+
+        <div className="mt-4">
+          <ExtensionPairing />
+        </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <ViewSwitcher
