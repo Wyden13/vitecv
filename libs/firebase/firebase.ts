@@ -18,18 +18,18 @@ const firebaseConfig: FirebaseOptions = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-if (process.env.NODE_ENV !== "production") {
-  const missing = Object.entries(firebaseConfig)
-    .filter(([, value]) => !value)
-    .map(([key]) => key);
+const missing = Object.entries(firebaseConfig)
+  .filter(([, value]) => !value)
+  .map(([key]) => key);
 
-  if (missing.length > 0) {
-    console.warn(
-      `[firebase] Missing config values: ${missing.join(", ")}. ` +
-      "Check .env and restart the dev server — NEXT_PUBLIC_* vars are read at build time.",
-    );
-  }
+if (missing.length > 0) {
+  console.warn(
+    `[firebase] Missing config values: ${missing.join(", ")}. ` +
+    "NEXT_PUBLIC_* vars are inlined at build time — set them in your host's " +
+    "environment settings and redeploy (locally: check .env and restart the dev server).",
+  );
 }
+
 // Create a credentials object
 export const app: FirebaseApp = getApps().length
   ? getApp()

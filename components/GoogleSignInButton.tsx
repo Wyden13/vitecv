@@ -18,15 +18,18 @@ export default function GoogleSignInButton() {
   const handleClick = async () => {
     setSigningIn(true);
 
+    let idToken: string;
+
     try {
       const user = await signInWithGoogle();
-      if (!user) return;
+      if (!user) {
+        setSigningIn(false);
+        return;
+      }
 
-      const idToken = await user.getIdToken();
-      startTransition(() => {
-        void createSession(idToken);
-      });
+      idToken = await user.getIdToken();
     } catch (error) {
+      setSigningIn(false);
       notify({
         variant: "error",
         message:
@@ -34,9 +37,18 @@ export default function GoogleSignInButton() {
             ? error.message
             : "Could not sign in with Google.",
       });
-    } finally {
-      setSigningIn(false);
+      return;
     }
+
+    // On success createSession redirects and this component unmounts, so
+    // `signingIn` is only cleared on the failure path below.
+    startTransition(async () => {
+      const result = await createSession(idToken);
+      if (result?.error) {
+        setSigningIn(false);
+        notify({ variant: "error", message: result.error });
+      }
+    });
   };
 
   return (

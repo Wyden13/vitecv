@@ -10,21 +10,52 @@ import {
 import { getAuth, type Auth } from "firebase-admin/auth";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
+/**
+ * Accepts the shapes a service-account private key arrives in:
+ *
+ * - `.env`, where the value must be double-quoted with literal `\n` escapes
+ * - a host's environment UI (Vercel, etc.), where it is pasted raw with real
+ *   newlines — and is often pasted *with* the surrounding quotes by mistake,
+ *   which makes them part of the value and leaves `cert()` failing with an
+ *   unhelpful parse error from deep inside the SDK.
+ */
+function normalizePrivateKey(raw: string): string {
+  let key = raw.trim();
+
+  const first = key[0];
+  if ((first === '"' || first === "'") && key.at(-1) === first) {
+    key = key.slice(1, -1);
+  }
+
+  return key.replace(/\\n/g, "\n");
+}
+
 function readCredentials() {
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
 
-  if (!projectId || !clientEmail || !privateKey) {
+  if (!projectId || !clientEmail || !rawPrivateKey) {
     const missing = [
       !projectId && "FIREBASE_PROJECT_ID",
       !clientEmail && "FIREBASE_CLIENT_EMAIL",
-      !privateKey && "FIREBASE_PRIVATE_KEY",
+      !rawPrivateKey && "FIREBASE_PRIVATE_KEY",
     ].filter(Boolean);
 
     throw new Error(
       `[firebase-admin] Missing ${missing.join(", ")}. Add them to .env — ` +
-      "see .env.example for where to find the values.",
+      "see .env.example for where to find the values. When deploying, set " +
+      "them in your host's environment variables and redeploy.",
+    );
+  }
+
+  const privateKey = normalizePrivateKey(rawPrivateKey);
+
+  if (!privateKey.startsWith("-----BEGIN")) {
+    throw new Error(
+      "[firebase-admin] FIREBASE_PRIVATE_KEY is set but is not a PEM private " +
+      "key (it should start with '-----BEGIN PRIVATE KEY-----'). In a host's " +
+      "environment UI, paste the key with real newlines and no surrounding quotes.",
     );
   }
 
