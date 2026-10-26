@@ -10,6 +10,7 @@ import {
   SESSION_MAX_AGE,
 } from "@/constants";
 import { getAdminAuth } from "@/libs/firebase/admin";
+import { getCurrentUser } from "@/libs/dal";
 import { readSessionCookie } from "@/libs/session";
 
 export interface SessionError {
@@ -59,6 +60,41 @@ export async function createSession(
   // Outside the try: redirect() signals navigation by throwing NEXT_REDIRECT,
   // so catching it here would swallow the redirect.
   redirect(HOME_ROUTE);
+}
+
+/**
+ * Mints a Firebase custom token for the session cookie's uid, so the browser
+ * SDK can be signed back in from the server session.
+ *
+ * The two halves of auth drift apart: the cookie lasts SESSION_MAX_AGE, while
+ * the client SDK's IndexedDB state can be cleared independently. When that
+ * happens every client Firestore read starts failing `firestore.rules`
+ * (`request.auth` is null) and `/login` refuses to help, because it redirects
+ * away whenever the cookie is valid. This is the bridge back.
+ *
+ * The cookie is the authority here — `getCurrentUser()` has already verified
+ * it, so the uid is never attacker-supplied. It returns null rather than
+ * redirecting (unlike `requireUser()`, whose redirect throws NEXT_REDIRECT and
+ * would be swallowed by the catch below).
+ */
+export async function createClientAuthToken(): Promise<
+  { token: string } | SessionError
+> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return { error: "Not signed in." };
+
+    const token = await getAdminAuth().createCustomToken(user.uid);
+    return { token };
+  } catch (error) {
+    console.error("[auth] createClientAuthToken failed", error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Could not refresh client auth.",
+    };
+  }
 }
 
 export async function removeSession() {

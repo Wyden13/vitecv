@@ -26,8 +26,6 @@ export default function TrackJobButton({ job, score }: TrackJobButtonProps) {
   const { notify } = useToast();
 
   const [saving, setSaving] = useState(false);
-  // Only guards a double-click within this session — a later visit can still
-  // track the same posting twice.
   const [tracked, setTracked] = useState(false);
 
   const track = async () => {
@@ -63,7 +61,7 @@ export default function TrackJobButton({ job, score }: TrackJobButtonProps) {
 
   return (
     <Button
-      variant="soft"
+      variant="primary"
       size="sm"
       disabled={!user || saving || tracked}
       onClick={() => void track()}

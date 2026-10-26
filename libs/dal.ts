@@ -30,7 +30,12 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   const adminAuth = getAdminAuth();
 
   try {
-    const decoded = await adminAuth.verifySessionCookie(cookie);
+    // checkRevoked: removeSession() revokes refresh tokens on sign-out, but
+    // without this flag a session cookie issued before that revocation still
+    // verifies — so signing out in one browser left other browsers signed in.
+    // Costs a round-trip to Firebase; the `use cache: private` scope above
+    // holds it to once per request.
+    const decoded = await adminAuth.verifySessionCookie(cookie, true);
 
     return {
       uid: decoded.uid,

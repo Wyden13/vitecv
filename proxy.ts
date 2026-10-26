@@ -3,7 +3,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { LOGIN_ROUTE, SESSION_COOKIE_NAME } from "@/constants";
 
 const PUBLIC_ROUTES = new Set<string>([LOGIN_ROUTE]);
-const SELF_AUTHENTICATED_ROUTES = new Set<string>(["/api/jobs"]);
+// Routes that carry their own credential (a bearer token) rather than the
+// session cookie, so the gate below must not redirect them to /login.
+const SELF_AUTHENTICATED_ROUTES = new Set<string>([
+  "/api/jobs",
+  "/api/health/auth",
+]);
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
