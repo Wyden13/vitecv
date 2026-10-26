@@ -38,17 +38,6 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
     </div>
   );
 }
-
-/**
- * Bounces an already-signed-in visitor to the app — unless `?force=1`.
- *
- * The escape hatch is load-bearing. The session cookie and the browser
- * SDK's auth state expire independently, and when only the client half is
- * lost the app still renders but every client Firestore read fails and the
- * account disappears. Redirecting unconditionally would make that state
- * unrecoverable: the one action that fixes it — signing in again — lives on
- * this page, behind the redirect. `?force=1` reaches it.
- */
 async function RedirectIfSignedIn({
   searchParams,
 }: {

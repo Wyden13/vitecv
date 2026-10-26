@@ -10,15 +10,6 @@ import {
 import { getAuth, type Auth } from "firebase-admin/auth";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
-/**
- * Accepts the shapes a service-account private key arrives in:
- *
- * - `.env`, where the value must be double-quoted with literal `\n` escapes
- * - a host's environment UI (Vercel, etc.), where it is pasted raw with real
- *   newlines — and is often pasted *with* the surrounding quotes by mistake,
- *   which makes them part of the value and leaves `cert()` failing with an
- *   unhelpful parse error from deep inside the SDK.
- */
 function normalizePrivateKey(raw: string): string {
   let key = raw.trim();
 
@@ -71,12 +62,6 @@ export function getAdminAuth(): Auth {
   return getAuth(getAdminApp());
 }
 
-/**
- * Server-side Firestore. Unlike the browser SDK in `libs/firebase/firebase.ts`,
- * the admin SDK **bypasses `firestore.rules` entirely** — the uid scoping that
- * the rules normally enforce becomes the caller's responsibility. Build every
- * path from `requireUser().uid`, never from anything the client supplied.
- */
 export function getAdminDb(): Firestore {
   return getFirestore(getAdminApp());
 }
