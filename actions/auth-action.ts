@@ -12,24 +12,52 @@ import {
 import { getAdminAuth } from "@/libs/firebase/admin";
 import { readSessionCookie } from "@/libs/session";
 
-export async function createSession(idToken: string) {
-  const adminAuth = getAdminAuth();
+export interface SessionError {
+  error: string;
+}
 
-  await adminAuth.verifyIdToken(idToken);
+/**
+ * Exchanges a Firebase ID token for a session cookie, then redirects home.
+ *
+ * Returns `{ error }` instead of throwing so the caller can show the real
+ * reason. Next.js redacts thrown server action errors in production to an
+ * opaque digest, which previously made a misconfigured deployment (missing
+ * or malformed FIREBASE_* vars) look like a button that silently does
+ * nothing. The message also lands in the host's runtime logs via
+ * `console.error`.
+ */
+export async function createSession(
+  idToken: string,
+): Promise<SessionError | void> {
+  try {
+    const adminAuth = getAdminAuth();
 
-  const sessionCookie = await adminAuth.createSessionCookie(idToken, {
-    expiresIn: SESSION_MAX_AGE,
-  });
+    await adminAuth.verifyIdToken(idToken);
 
-  const store = await cookies();
-  store.set(SESSION_COOKIE_NAME, sessionCookie, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: SESSION_MAX_AGE / 1000,
-    path: "/",
-  });
+    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+      expiresIn: SESSION_MAX_AGE,
+    });
 
+    const store = await cookies();
+    store.set(SESSION_COOKIE_NAME, sessionCookie, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: SESSION_MAX_AGE / 1000,
+      path: "/",
+    });
+  } catch (error) {
+    console.error("[auth] createSession failed", error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Could not create a session.",
+    };
+  }
+
+  // Outside the try: redirect() signals navigation by throwing NEXT_REDIRECT,
+  // so catching it here would swallow the redirect.
   redirect(HOME_ROUTE);
 }
 
