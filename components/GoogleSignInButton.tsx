@@ -40,8 +40,6 @@ export default function GoogleSignInButton() {
       return;
     }
 
-    // On success createSession redirects and this component unmounts, so
-    // `signingIn` is only cleared on the failure path below.
     startTransition(async () => {
       const result = await createSession(idToken);
       if (result?.error) {
