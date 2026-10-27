@@ -20,47 +20,18 @@ import {
   type RoleGap,
 } from "./insightSchema";
 
-/**
- * Stored analyses, read and written from the browser like every other resume
- * document. `firestore.rules` already covers the path through its
- * `users/{uid}/{document=**}` rule, so there is nothing to add there.
- *
- * These live in a subcollection rather than as fields on the resume: the resume
- * document already carries `rawText`, and the editor re-reads it on every
- * keystroke-driven snapshot. Analyses have no business inflating that.
- *
- * Stored payloads go back through the same normalizers the model output does —
- * a document written by an older build is as untrusted as a model reply, and
- * re-filtering citations against the *current* blocks means the evidence panel
- * can never point at text the user has since deleted.
- */
-
 function insightDoc(userId: string, resumeId: string, name: "latest" | "gap") {
   return doc(db, "users", userId, "resumes", resumeId, "insights", name);
 }
 
-/**
- * Job matches are many-per-resume, one per posting, so they get a subcollection
- * rather than the fixed `insights/{latest,gap}` ids — whose `name` union is
- * closed for exactly that reason.
- *
- * `key` is a hash of the inputs AND the document id, which makes a cache lookup
- * one `getDoc` with no query and no index.
- */
 function jobMatchDoc(userId: string, resumeId: string, key: string) {
   return doc(db, "users", userId, "resumes", resumeId, "jobMatches", key);
 }
 
 function toDate(value: unknown): Date | null {
-  // Pending server timestamps read back as null on the local echo.
   return (value as Timestamp | null | undefined)?.toDate() ?? null;
 }
 
-/**
- * `getKnownBlockIds` is a getter, not an array, because the resume can change
- * while this subscription is open: it must be read when a snapshot arrives, not
- * when we subscribed, or citations would be filtered against a stale resume.
- */
 export function subscribeToAnalysis(
   userId: string,
   resumeId: string,
@@ -151,8 +122,7 @@ export interface StoredJobMatch extends JobMatchPayload {
 }
 
 /**
- * The cache read. One-shot rather than a subscription: this is consulted at the
- * moment a match runs, not watched for changes.
+ * The cache read.
  *
  * Returns null on a miss, which is the caller's signal to call the model.
  *

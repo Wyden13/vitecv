@@ -1,7 +1,6 @@
 import { KEYWORD_CATEGORIES } from "./insightSchema";
 
 export interface ChatMessage {
-  /** `assistant` lets a transcript be replayed to the model — see libs/chat. */
   role: "system" | "user" | "assistant";
   content: string;
 }
