@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
+/* `dark:` follows the `data-theme` attribute on <html>, not the OS. The inline
+   script in app/layout.tsx resolves the "system" preference to a concrete
+   light/dark value before first paint, so this attribute is the single source
+   of truth and no prefers-color-scheme branch is needed below. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
+  color-scheme: light;
+
   --background: #ffffff;
   --foreground: #171717;
 
@@ -58,54 +66,81 @@
 }
 
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-zinc-50: #f8f8f2; /* Dracula foreground */
-    --color-zinc-100: #eaeaf2;
-    --color-zinc-200: #d2d4e4;
-    --color-zinc-300: #b6bad2;
+[data-theme="dark"] {
+  color-scheme: dark;
 
-    --color-zinc-400: #9ba3c7;
-    --color-zinc-500: #7e88b0;
-    --color-zinc-600: #6272a4; /* Dracula comment — de-emphasised use only */
-    --color-zinc-700: #4a5273;
-    --color-zinc-800: #3b3f52; /* borders */
-    --color-zinc-900: #282a36; /* Dracula background — cards, surfaces */
-    --color-zinc-950: #21222c; /* Dracula darker — page behind cards */
+  --color-zinc-50: #f8f8f2; /* Dracula foreground */
+  --color-zinc-100: #eaeaf2;
+  --color-zinc-200: #d2d4e4;
+  --color-zinc-300: #b6bad2;
 
-    /* Errors; same trick, covering dark:text-red-400 and dark:border-red-900. */
-    --color-red-400: #ff5555; /* Dracula red */
-    --color-red-900: #5c2b2b;
+  --color-zinc-400: #9ba3c7;
+  --color-zinc-500: #7e88b0;
+  --color-zinc-600: #6272a4; /* Dracula comment — de-emphasised use only */
+  --color-zinc-700: #4a5273;
+  --color-zinc-800: #3b3f52; /* borders */
+  --color-zinc-900: #282a36; /* Dracula background — cards, surfaces */
+  --color-zinc-950: #21222c; /* Dracula darker — page behind cards */
 
-    --background: #282a36;
-    --foreground: #f8f8f2;
+  /* Errors; same trick, covering dark:text-red-400 and dark:border-red-900. */
+  --color-red-400: #ff5555; /* Dracula red */
+  --color-red-900: #5c2b2b;
 
-    --accent: #8be9fd; /* Dracula cyan */
-    /* Dark fills are bright with dark text, so hover dims rather than
-       darkens — the same direction as zinc-50 → zinc-200. */
-    --accent-hover: #66d3ee;
-    --accent-subtle: #1e3540;
-    --accent-subtle-hover: #27485a;
-    --accent-border: #3d6e85;
+  --background: #282a36;
+  --foreground: #f8f8f2;
 
-    --accent-alt: #ffb86c; /* Dracula orange */
-    --accent-alt-subtle: #3a2e20;
-    --accent-alt-subtle-hover: #4a3a28;
-    --accent-alt-border: #6b4f33;
+  --accent: #8be9fd; /* Dracula cyan */
+  /* Dark fills are bright with dark text, so hover dims rather than
+     darkens — the same direction as zinc-50 → zinc-200. */
+  --accent-hover: #66d3ee;
+  --accent-subtle: #1e3540;
+  --accent-subtle-hover: #27485a;
+  --accent-border: #3d6e85;
 
-    --accent-good: #50fa7b; /* Dracula green */
-    --accent-good-subtle: #1e3a28;
-    --accent-good-border: #3d7a52;
+  --accent-alt: #ffb86c; /* Dracula orange */
+  --accent-alt-subtle: #3a2e20;
+  --accent-alt-subtle-hover: #4a3a28;
+  --accent-alt-border: #6b4f33;
 
-    --accent-warn: #f1fa8c; /* Dracula yellow */
-    --accent-warn-subtle: #3a3420;
-    --accent-warn-border: #6b6333;
-  }
+  --accent-good: #50fa7b; /* Dracula green */
+  --accent-good-subtle: #1e3a28;
+  --accent-good-border: #3d7a52;
+
+  --accent-warn: #f1fa8c; /* Dracula yellow */
+  --accent-warn-subtle: #3a3420;
+  --accent-warn-border: #6b6333;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* ---------------------------------------------------------------------------
+   Document surfaces
+
+   Anything that renders a document: the Letter-sized previews and the gallery
+   thumbnails. Documents are printed artifacts — white paper whatever the app
+   chrome is doing — so the dark palette above must not reach them. Templates
+   draw with bare `text-zinc-700/800/900` and no `dark:` variant, so pinning
+   `color-scheme` is not enough; the zinc scale itself is restored to Tailwind's
+   stock light values, copied from node_modules/tailwindcss/theme.css.
+   --------------------------------------------------------------------------- */
+
+.doc-surface {
+  color-scheme: light;
+
+  --color-zinc-50: oklch(98.5% 0 none);
+  --color-zinc-100: oklch(96.7% 0.001 286.375);
+  --color-zinc-200: oklch(92% 0.004 286.32);
+  --color-zinc-300: oklch(87.1% 0.006 286.286);
+  --color-zinc-400: oklch(70.5% 0.015 286.067);
+  --color-zinc-500: oklch(55.2% 0.016 285.938);
+  --color-zinc-600: oklch(44.2% 0.017 285.786);
+  --color-zinc-700: oklch(37% 0.013 285.805);
+  --color-zinc-800: oklch(27.4% 0.006 286.033);
+  --color-zinc-900: oklch(21% 0.006 285.885);
+  --color-zinc-950: oklch(14.1% 0.005 285.823);
 }
 
 /* ---------------------------------------------------------------------------
@@ -125,7 +160,6 @@ body {
   min-height: 11in;
   padding: var(--page-pad-y, 0.6in) var(--page-pad-x, 0.7in);
   box-sizing: border-box;
-  color-scheme: light;
 }
 
 .doc-page-scaler {
@@ -142,6 +176,15 @@ body {
   @page {
     size: letter;
     margin: 0;
+  }
+
+  /* Paper is paper. A user who pinned Dark should still get black-on-white
+     out of the printer, so the page-level tokens revert for print; `.doc-surface`
+     does the same for the zinc scale the templates draw with. */
+  html {
+    color-scheme: light;
+    --background: #ffffff;
+    --foreground: #171717;
   }
 
   html,

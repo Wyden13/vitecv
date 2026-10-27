@@ -208,3 +208,29 @@ export function SparkleIcon(props: IconProps) {
     </StrokeIcon>
   );
 }
+
+export function SunIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" />
+    </StrokeIcon>
+  );
+}
+
+export function MoonIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
+    </StrokeIcon>
+  );
+}
+
+export function MonitorIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <rect x="2.5" y="4" width="19" height="13" rx="2" />
+      <path d="M9 20.5h6M12 17v3.5" />
+    </StrokeIcon>
+  );
+}

@@ -32,7 +32,7 @@ export default function DocumentThumbnail({
     <div
       ref={frameRef}
       aria-hidden="true"
-      className="pointer-events-none relative w-full select-none overflow-hidden bg-white"
+      className="doc-surface pointer-events-none relative w-full select-none overflow-hidden bg-white"
       style={{ aspectRatio: `${PAGE_WIDTH_PX} / ${PAGE_HEIGHT_PX}` }}
     >
       {scale !== null && (
