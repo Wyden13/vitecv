@@ -3,11 +3,13 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
   updateDoc,
+  type DocumentData,
   type Timestamp,
   type Unsubscribe,
 } from "firebase/firestore";
@@ -92,6 +94,20 @@ export async function createBlankResume(
   return created.id;
 }
 
+function toResumeRecord(id: string, data: DocumentData): ResumeRecord {
+  const updatedAt = data.updatedAt as Timestamp | null | undefined;
+
+  return {
+    id,
+    title: data.title ?? "Untitled resume",
+    fileName: data.fileName ?? null,
+    rawText: data.rawText ?? "",
+    status: (data.status as ResumeStatus) ?? "extracted",
+    document: normalizeResumeDocument(data.document),
+    updatedAt: updatedAt?.toDate() ?? null,
+  };
+}
+
 export function subscribeToResume(
   userId: string,
   resumeId: string,
@@ -109,23 +125,25 @@ export function subscribeToResume(
         return;
       }
 
-      const data = snapshot.data();
-      const updatedAt = data.updatedAt as Timestamp | null | undefined;
-
-      handlers.onData({
-
-
-        id: snapshot.id,
-        title: data.title ?? "Untitled resume",
-        fileName: data.fileName ?? null,
-        rawText: data.rawText ?? "",
-        status: (data.status as ResumeStatus) ?? "extracted",
-        document: normalizeResumeDocument(data.document),
-        updatedAt: updatedAt?.toDate() ?? null,
-      });
+      handlers.onData(toResumeRecord(snapshot.id, snapshot.data()));
     },
     (error) => handlers.onError(error),
   );
+}
+
+/**
+ * One-shot read for callers that want a resume once and are done with it — the
+ * library import, which copies a document in and never watches it again.
+ */
+export async function getResume(
+  userId: string,
+  resumeId: string,
+): Promise<ResumeRecord | null> {
+  const snapshot = await getDoc(resumeDoc(userId, resumeId));
+
+  return snapshot.exists()
+    ? toResumeRecord(snapshot.id, snapshot.data())
+    : null;
 }
 
 export interface ResumeSummary {

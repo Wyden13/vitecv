@@ -147,16 +147,20 @@ export function createSection(
   }
 }
 
+export function createEmptyProfile(): ResumeProfile {
+  return {
+    name: "",
+    title: "",
+    email: "",
+    phone: "",
+    location: "",
+    links: [],
+  };
+}
+
 export function createEmptyResumeDocument(): ResumeDocument {
   return {
-    profile: {
-      name: "",
-      title: "",
-      email: "",
-      phone: "",
-      location: "",
-      links: [],
-    },
+    profile: createEmptyProfile(),
     sections: DEFAULT_SECTION_PRESET_IDS.map((id) =>
       createSection(getSectionPreset(id)),
     ),
@@ -175,7 +179,35 @@ function textList(value: unknown): string[] {
     : [];
 }
 
-function normalizeTimelineEntry(value: unknown): TimelineEntry {
+function normalizeProfileLink(value: unknown): ProfileLink {
+  const raw = (value ?? {}) as Record<string, unknown>;
+
+  return {
+    id: text(raw.id) || createId(),
+    label: text(raw.label),
+    url: text(raw.url),
+  };
+}
+
+/**
+ * The library stores the profile as a document of its own, so it needs a
+ * normalizer the full-document path does not: `normalizeResumeDocument` only
+ * spreads `value.profile` over the empty base.
+ */
+export function normalizeProfile(value: unknown): ResumeProfile {
+  const raw = (value ?? {}) as Record<string, unknown>;
+
+  return {
+    name: text(raw.name),
+    title: text(raw.title),
+    email: text(raw.email),
+    phone: text(raw.phone),
+    location: text(raw.location),
+    links: Array.isArray(raw.links) ? raw.links.map(normalizeProfileLink) : [],
+  };
+}
+
+export function normalizeTimelineEntry(value: unknown): TimelineEntry {
   const raw = (value ?? {}) as Record<string, unknown>;
 
   return {
@@ -192,7 +224,7 @@ function normalizeTimelineEntry(value: unknown): TimelineEntry {
   };
 }
 
-function normalizeSkillGroup(value: unknown): SkillGroup {
+export function normalizeSkillGroup(value: unknown): SkillGroup {
   const raw = (value ?? {}) as Record<string, unknown>;
 
   return {

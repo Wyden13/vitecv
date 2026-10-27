@@ -10,6 +10,7 @@ export interface NavItem {
 
 const SIDEBAR_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard" },
+  { label: "Library", href: "/library" },
   { label: "Cover Letter", href: "/cv" },
   { label: "Resume Builder", href: "/resume" },
   { label: "Insights", href: "/insights" },
