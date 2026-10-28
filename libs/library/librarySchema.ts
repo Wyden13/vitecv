@@ -36,6 +36,33 @@ export const LIBRARY_BUILTIN_SECTION_KEYS = [
   "certificates",
 ];
 
+/**
+ * Presets that name the same thing on either side of the library. A resume
+ * created from scratch gets the "experience" preset while the library's
+ * built-in section is "work-experience", so without this a pull would add a
+ * second Experience heading instead of filling the one already there.
+ */
+const EQUIVALENT_PRESET_IDS: string[][] = [
+  ["work-experience", "experience"],
+  ["skills", "technical-skills"],
+];
+
+export function presetIdsMatch(a: string, b: string): boolean {
+  if (a === b) return true;
+
+  return EQUIVALENT_PRESET_IDS.some(
+    (group) => group.includes(a) && group.includes(b),
+  );
+}
+
+/** The built-in library section a resume preset belongs to, if any. */
+export function libraryKeyForPreset(presetId: string): string | null {
+  return (
+    LIBRARY_BUILTIN_SECTION_KEYS.find((key) => presetIdsMatch(key, presetId)) ??
+    null
+  );
+}
+
 export interface LibrarySectionMeta {
   id: string;
   heading: string;

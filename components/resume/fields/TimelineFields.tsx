@@ -122,7 +122,7 @@ export default function TimelineFields({
       ))}
 
       <Button
-        variant="secondary"
+        variant="soft"
         size="sm"
         className="self-start"
         icon={<PlusIcon className="size-4" />}

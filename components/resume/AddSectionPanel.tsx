@@ -11,17 +11,20 @@ import {
   type SectionPreset,
 } from "@/libs/resume/sectionPresets";
 import Button from "../Button";
-import { PlusIcon, XIcon } from "../icons";
+import { LayoutGridIcon, PlusIcon, XIcon } from "../icons";
 import { Field } from "./fields/Field";
 
 export interface AddSectionPanelProps {
   usedPresetIds: string[];
   onAdd: (preset: SectionPreset, heading?: string) => void;
+  /** Opens the library drawer, which the parent owns. */
+  onPullFromLibrary: () => void;
 }
 
 export default function AddSectionPanel({
   usedPresetIds,
   onAdd,
+  onPullFromLibrary,
 }: AddSectionPanelProps) {
   const [open, setOpen] = useState(false);
   const [customOpen, setCustomOpen] = useState(false);
@@ -42,14 +45,22 @@ export default function AddSectionPanel({
 
   if (!open) {
     return (
-      <div className="px-4 py-5">
+      <div className="flex gap-2 px-4 py-5">
         <Button
-          variant="secondary"
-          className="w-full border-dashed"
+          variant="soft"
+          className="flex-1 border-dashed"
           icon={<PlusIcon className="size-4" />}
           onClick={() => setOpen(true)}
         >
           Add section
+        </Button>
+        <Button
+          variant="secondary"
+          className="flex-1 border-dashed"
+          icon={<LayoutGridIcon className="size-4" />}
+          onClick={onPullFromLibrary}
+        >
+          From Library
         </Button>
       </div>
     );
