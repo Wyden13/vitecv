@@ -105,7 +105,7 @@ export default function ProfileFields({ value, onChange }: ProfileFieldsProps) {
         ))}
 
         <Button
-          variant="secondary"
+          variant="soft"
           size="sm"
           className="self-start"
           icon={<PlusIcon className="size-4" />}

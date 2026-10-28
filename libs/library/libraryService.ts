@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   orderBy,
@@ -24,8 +25,8 @@ import {
   type ResumeProfile,
 } from "@/libs/resume/resumeSchema";
 import {
-  LIBRARY_BUILTIN_SECTION_KEYS,
   libraryItemHasContent,
+  libraryKeyForPreset,
   normalizeLibraryItem,
   normalizeLibrarySection,
   type LibraryItem,
@@ -72,7 +73,7 @@ function toDate(value: unknown): Date | null {
   return (value as Timestamp | null | undefined)?.toDate() ?? null;
 }
 
-/* -------------------------------------------------------------- profile -- */
+/* profile -- */
 
 export function subscribeToLibraryProfile(
   userId: string,
@@ -105,7 +106,20 @@ export async function saveLibraryProfile(
   );
 }
 
-/* ------------------------------------------------------------- sections -- */
+/**
+ * the resume editor use "use library profile" action to read and fill the profile once.
+ * The subscription stays for the library page which wants live update.
+ *
+ */
+export async function getLibraryProfile(
+  userId: string,
+): Promise<ResumeProfile | null> {
+  const snapshot = await getDoc(profileDoc(userId));
+
+  return snapshot.exists() ? normalizeProfile(snapshot.data()) : null;
+}
+
+/* -- sections -- */
 
 export function subscribeToLibrarySections(
   userId: string,
@@ -249,21 +263,11 @@ export async function reorderLibraryItems(
 /* --------------------------------------------------------------- import -- */
 
 /**
- * Resume presets that mean the same thing as a built-in library section. Any
- * other recognised preset — Projects, Awards, Languages — becomes a section of
- * its own that keeps its preset id, so it still edits with the right field
- * labels instead of collapsing into a generic custom block.
+ * A recognised preset with no built-in library section — Projects, Awards,
+ * Languages — becomes a section of its own that keeps its preset id, so it
+ * still edits with the right field labels instead of collapsing into a
+ * generic custom block.
  */
-const BUILTIN_BY_RESUME_PRESET: Record<string, string> = {
-  experience: "work-experience",
-  "technical-skills": "skills",
-};
-
-function sectionKeyFor(presetId: string): string | null {
-  if (LIBRARY_BUILTIN_SECTION_KEYS.includes(presetId)) return presetId;
-
-  return BUILTIN_BY_RESUME_PRESET[presetId] ?? null;
-}
 
 function itemsFromSection(
   section: ResumeDocument["sections"][number],
@@ -351,7 +355,7 @@ export async function importLibraryFromResume(
   }
 
   for (const section of document.sections) {
-    let sectionKey = sectionKeyFor(section.presetId);
+    let sectionKey = libraryKeyForPreset(section.presetId);
 
     if (!sectionKey) {
       // Reuse a custom section the user already has for this preset rather

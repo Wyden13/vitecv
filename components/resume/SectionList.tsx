@@ -12,7 +12,13 @@ import {
   presetForLayout,
   type SectionPreset,
 } from "@/libs/resume/sectionPresets";
+import {
+  applyLibraryPull,
+  type LibraryPick,
+} from "@/libs/library/libraryPull";
 import AddSectionPanel from "./AddSectionPanel";
+import LibraryProfileButton from "./LibraryProfileButton";
+import LibraryPullSheet from "./LibraryPullSheet";
 import SectionCard from "./SectionCard";
 import ProfileFields from "./fields/ProfileFields";
 import SkillFields from "./fields/SkillFields";
@@ -38,6 +44,7 @@ function move<T>(items: T[], from: number, to: number): T[] {
 export default function SectionList({ document, onChange }: SectionListProps) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const [pullOpen, setPullOpen] = useState(false);
 
   const { sections } = document;
 
@@ -113,10 +120,16 @@ export default function SectionList({ document, onChange }: SectionListProps) {
   return (
     <div className="flex flex-col">
       <SectionCard heading="Profile Info" hint={PROFILE_HINT}>
-        <ProfileFields
-          value={document.profile}
-          onChange={(profile) => onChange({ ...document, profile })}
-        />
+        <div className="flex flex-col gap-3">
+          <LibraryProfileButton
+            profile={document.profile}
+            onChange={(profile) => onChange({ ...document, profile })}
+          />
+          <ProfileFields
+            value={document.profile}
+            onChange={(profile) => onChange({ ...document, profile })}
+          />
+        </div>
       </SectionCard>
 
       {sections.map((section, index) => (
@@ -159,6 +172,17 @@ export default function SectionList({ document, onChange }: SectionListProps) {
       <AddSectionPanel
         usedPresetIds={sections.map((section) => section.presetId)}
         onAdd={addSection}
+        onPullFromLibrary={() => setPullOpen(true)}
+      />
+
+      <LibraryPullSheet
+        open={pullOpen}
+        document={document}
+        onClose={() => setPullOpen(false)}
+        onPull={(picks: LibraryPick[]) => {
+          onChange(applyLibraryPull(document, picks));
+          setPullOpen(false);
+        }}
       />
     </div>
   );
