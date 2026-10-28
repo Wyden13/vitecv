@@ -12,7 +12,6 @@ import {
 } from "@/libs/theme";
 
 export interface ThemeState {
-  /** What the user chose, which may be "system". */
   theme: ThemePref;
   setTheme: (next: ThemePref) => void;
 }
@@ -38,14 +37,7 @@ export function useTheme(): ThemeState {
   );
 
   useEffect(() => {
-    // The boot script already set the attribute for first paint, so on mount
-    // this is a no-op; it earns its keep on later preference changes and when
-    // a sibling tab writes a new one.
     applyTheme(theme);
-
-    // Following the OS means following it mid-session too. The media listener
-    // cannot live in `subscribe`: an OS flip leaves the stored preference as
-    // "system", so the snapshot is unchanged and React would not re-render.
     if (theme !== "system") return;
 
     const media = window.matchMedia(DARK_QUERY);
