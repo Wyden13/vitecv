@@ -62,7 +62,7 @@ export default function SkillFields({
       ))}
 
       <Button
-        variant="secondary"
+        variant="soft"
         size="sm"
         className="self-start"
         icon={<PlusIcon className="size-4" />}

@@ -7,6 +7,7 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUser";
 import { signOut } from "@/libs/firebase/auth";
 import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function UserMenu() {
   const { user, loading } = useFirebaseUser();
@@ -14,9 +15,7 @@ export default function UserMenu() {
   const [signingOut, setSigningOut] = useState(false);
   const [pending, startTransition] = useTransition();
 
-  if (loading || !user) return null;
-
-  const label = user.displayName ?? user.email ?? "Account";
+  const label = user?.displayName ?? user?.email ?? "Account";
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -38,30 +37,38 @@ export default function UserMenu() {
 
   return (
     <div className="flex items-center gap-2">
-      {user.photoURL ? (
-        <img
-          src={user.photoURL}
-          alt=""
-          className="size-7 rounded-full border border-zinc-200 dark:border-zinc-800"
-        />
-      ) : (
-        <span className="flex size-7 items-center justify-center rounded-full bg-zinc-100 text-xs font-medium text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
-          {label.charAt(0).toUpperCase()}
-        </span>
+      {/* Outside the account block on purpose: the theme is switchable while
+          auth is still resolving, and on signed-out pages that render this. */}
+      <ThemeToggle />
+
+      {loading || !user ? null : (
+        <>
+          {user.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt=""
+              className="size-7 rounded-full border border-zinc-200 dark:border-zinc-800"
+            />
+          ) : (
+            <span className="flex size-7 items-center justify-center rounded-full bg-zinc-100 text-xs font-medium text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+              {label.charAt(0).toUpperCase()}
+            </span>
+          )}
+
+          <span className="hidden max-w-32 truncate text-sm text-zinc-600 sm:block dark:text-zinc-400">
+            {label}
+          </span>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            disabled={signingOut || pending}
+          >
+            {signingOut || pending ? "Signing out…" : "Sign out"}
+          </Button>
+        </>
       )}
-
-      <span className="hidden max-w-32 truncate text-sm text-zinc-600 sm:block dark:text-zinc-400">
-        {label}
-      </span>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleSignOut}
-        disabled={signingOut || pending}
-      >
-        {signingOut || pending ? "Signing out…" : "Sign out"}
-      </Button>
     </div>
   );
 }

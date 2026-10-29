@@ -208,3 +208,56 @@ export function SparkleIcon(props: IconProps) {
     </StrokeIcon>
   );
 }
+
+export function SunIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" />
+    </StrokeIcon>
+  );
+}
+
+export function MoonIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
+    </StrokeIcon>
+  );
+}
+
+export function MonitorIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <rect x="2.5" y="4" width="19" height="13" rx="2" />
+      <path d="M9 20.5h6M12 17v3.5" />
+    </StrokeIcon>
+  );
+}
+
+export function UserIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <circle cx="12" cy="8" r="3.75" />
+      <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
+    </StrokeIcon>
+  );
+}
+
+export function GraduationCapIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M12 4 2.5 8.5 12 13l9.5-4.5L12 4Z" />
+      <path d="M6.5 11v5.5c0 1.1 2.5 2.5 5.5 2.5s5.5-1.4 5.5-2.5V11" />
+    </StrokeIcon>
+  );
+}
+
+export function PencilIcon(props: IconProps) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17v3Z" />
+      <path d="M14.5 5.5l4 4" />
+    </StrokeIcon>
+  );
+}

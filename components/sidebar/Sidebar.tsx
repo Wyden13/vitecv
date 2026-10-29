@@ -10,6 +10,7 @@ export interface NavItem {
 
 const SIDEBAR_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard" },
+  { label: "Library", href: "/library" },
   { label: "Cover Letter", href: "/cv" },
   { label: "Resume Builder", href: "/resume" },
   { label: "Insights", href: "/insights" },
@@ -21,7 +22,7 @@ export default function Sidebar() {
   return (
     <nav
       aria-label="Main"
-      className="flex h-full w-48 shrink-0 flex-col border-r border-accent-border bg-accent-subtle/50 p-3 print:hidden"
+      className="flex h-full w-48 shrink-0 flex-col border-r border-zinc-200 dark:border-zinc-800 bg-accent-subtle/10 p-3 print:hidden"
     >
       <Link
         href="/dashboard"

@@ -12,7 +12,7 @@ export default function ResumePreview({ document }: ResumePreviewProps) {
 
   return (
     <div
-      className="doc-page overflow-hidden bg-white text-zinc-900 shadow-lg [font-family:var(--tpl-body)]"
+      className="doc-page doc-surface overflow-hidden bg-white text-zinc-900 shadow-lg [font-family:var(--tpl-body)]"
       style={{ ...themeStyle(document.theme), ...template.pageStyle }}
     >
       <Template document={document} />

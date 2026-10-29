@@ -3,6 +3,11 @@
 export interface ViewOption<T extends string> {
   id: T;
   label: string;
+  /**
+   * Renders in place of the label, which becomes the accessible name instead.
+   * For controls too narrow to spell their options out.
+   */
+  icon?: React.ReactNode;
 }
 
 export interface ViewSwitcherProps<T extends string> {
@@ -18,7 +23,7 @@ const TRACK =
   "dark:border-zinc-700 dark:bg-zinc-800";
 
 const SEGMENT =
-  "rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors " +
+  "rounded-full py-1.5 text-xs font-medium transition-colors " +
   "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 " +
   "focus-visible:ring-offset-background focus-visible:outline-none";
 
@@ -44,13 +49,15 @@ export default function ViewSwitcher<T extends string>({
             type="button"
             onClick={() => onChange(option.id)}
             aria-pressed={selected}
-            className={`${SEGMENT} ${
+            aria-label={option.icon ? option.label : undefined}
+            title={option.icon ? option.label : undefined}
+            className={`${SEGMENT} ${option.icon ? "px-2.5" : "px-3.5"} ${
               selected
                 ? "bg-background text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-50"
                 : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
             }`}
           >
-            {option.label}
+            {option.icon ?? option.label}
           </button>
         );
       })}
