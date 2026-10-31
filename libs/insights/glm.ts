@@ -146,3 +146,109 @@ export async function callGlmJson(messages: ChatMessage[]): Promise<GlmResult> {
     throw new Error("GLM returned content that was not valid JSON.");
   }
 }
+
+/* -------------------------------------------------------------------------
+ * Tool calling
+ *
+ * A sibling to `callGlmJson` rather than a flag on it. The two are mutually
+ * exclusive at the API: `response_format: json_object` constrains the whole
+ * reply to one JSON object, which is exactly what tool calling needs *not* to
+ * happen — a tool turn returns prose alongside a separate `tool_calls` array.
+ *
+ * It lives here, next to the JSON client, so both share `readConfig` and
+ * `describeFailure`. A second module would mean a second copy of the key
+ * handling and the error mapping, kept in sync by hand.
+ * ---------------------------------------------------------------------- */
+
+export interface GlmToolCall {
+  id: string;
+  name: string;
+  /** Parsed from the model's argument string; shape is checked downstream. */
+  arguments: unknown;
+}
+
+export interface GlmToolResult {
+  content: string;
+  toolCalls: GlmToolCall[];
+  model: string;
+}
+
+interface RawToolCall {
+  id?: string;
+  function?: { name?: string; arguments?: string };
+}
+
+/**
+ * A malformed argument string drops that one call rather than failing the
+ * turn: the prose half of the reply is still worth showing, and a dropped
+ * proposal is a missing button, not a wrong edit.
+ */
+function parseToolCalls(raw: unknown): GlmToolCall[] {
+  if (!Array.isArray(raw)) return [];
+
+  const calls: GlmToolCall[] = [];
+
+  for (const entry of raw as RawToolCall[]) {
+    const name = entry?.function?.name;
+    if (typeof name !== "string" || !name) continue;
+
+    const body = entry?.function?.arguments;
+    let parsed: unknown = {};
+
+    if (typeof body === "string" && body.trim()) {
+      try {
+        parsed = JSON.parse(body);
+      } catch {
+        console.warn(`[glm] dropped tool call "${name}": arguments were not JSON.`);
+        continue;
+      }
+    }
+
+    calls.push({ id: entry.id ?? name, name, arguments: parsed });
+  }
+
+  return calls;
+}
+
+export async function callGlmTools(
+  messages: ChatMessage[],
+  tools: unknown[],
+): Promise<GlmToolResult> {
+  const { apiKey, model, baseUrl, reasoningEffort } = readConfig();
+  const url = `${baseUrl}/paas/v4/chat/completions`;
+
+  const base = {
+    model,
+    messages,
+    tools,
+    tool_choice: "auto",
+    do_sample: false,
+    seed: DETERMINISM_SEED,
+    temperature: 0.2,
+  };
+
+  const variants = reasoningVariants(reasoningEffort);
+  let attempt = await post(url, apiKey, { ...base, ...variants[0] });
+
+  if (isReasoningRejection(attempt.status, attempt.body)) {
+    attempt = await post(url, apiKey, { ...base, ...variants[1] });
+  }
+
+  if (!attempt.ok) {
+    throw new Error(describeFailure(attempt.status, attempt.body));
+  }
+
+  const body = JSON.parse(attempt.body) as {
+    choices?: {
+      message?: { content?: string | null; tool_calls?: unknown };
+    }[];
+  };
+
+  const message = body.choices?.[0]?.message;
+
+  return {
+    content: typeof message?.content === "string" ? message.content : "",
+    toolCalls: parseToolCalls(message?.tool_calls),
+    model,
+  };
+}

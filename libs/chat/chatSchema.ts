@@ -19,8 +19,37 @@ export interface ChatMessageRecord {
   /** Empty strings rather than null — Firestore round-trips them cleanly. */
   suggestLabel: string;
   suggestHref: string;
+  /** Write actions the assistant proposed on this turn, awaiting confirmation. */
+  actions: StoredAction[];
   createdAt: Date | null;
 }
+
+/**
+ * A proposed action as it sits in Firestore between being suggested and being
+ * confirmed — or not.
+ *
+ * `summary` is stored rather than recomputed because it is also what the model
+ * is shown on later turns: rebuilding it would mean re-resolving documents
+ * that may since have changed, to describe something that already happened.
+ */
+export type ActionState = "proposed" | "applied" | "skipped" | "failed";
+
+export const ACTION_STATES: ActionState[] = [
+  "proposed",
+  "applied",
+  "skipped",
+  "failed",
+];
+
+export interface StoredAction {
+  tool: string;
+  args: Record<string, string | string[]>;
+  summary: string;
+  state: ActionState;
+}
+
+/** One turn should not be able to bury the transcript in buttons. */
+export const MAX_ACTIONS = 5;
 
 /**
  * The chat composer's `useActionState` shape. It lives here, not in
@@ -36,11 +65,6 @@ export const EMPTY_TURN: ChatTurnState = { error: "" };
 export interface AgentSuggestion {
   label: string;
   href: string;
-}
-
-export interface AgentReply {
-  reply: string;
-  suggest: AgentSuggestion | null;
 }
 
 /**
@@ -102,7 +126,12 @@ export function normalizeAttachments(value: unknown): ChatAttachment[] {
   return kept;
 }
 
-function asSuggestion(value: unknown): AgentSuggestion | null {
+/**
+ * The same whitelist check as before, now exported: with tool calling the
+ * route suggestion arrives as a tool argument rather than a JSON field, but it
+ * is still model-written text rendered as a link, so it is still checked here.
+ */
+export function asSuggestion(value: unknown): AgentSuggestion | null {
   if (!value || typeof value !== "object") return null;
 
   const raw = value as Record<string, unknown>;
@@ -115,11 +144,49 @@ function asSuggestion(value: unknown): AgentSuggestion | null {
   return { label, href: allowed };
 }
 
-export function normalizeAgentReply(value: unknown): AgentReply {
-  const raw = (value ?? {}) as Record<string, unknown>;
+function argValue(value: unknown): string | string[] | null {
+  if (Array.isArray(value)) {
+    const list = value.map(text).filter(Boolean);
+    return list.length > 0 ? list : null;
+  }
 
-  return {
-    reply: text(raw.reply),
-    suggest: asSuggestion(raw.suggest),
-  };
+  const line = text(value);
+  return line || null;
+}
+
+function asState(value: unknown): ActionState {
+  return ACTION_STATES.find((state) => state === value) ?? "proposed";
+}
+
+/**
+ * Read back from Firestore, where the shape is only as good as whatever wrote
+ * it. Total, like every other `normalize*` here: a malformed entry is dropped
+ * rather than rendered as a button that cannot work.
+ */
+export function normalizeStoredActions(value: unknown): StoredAction[] {
+  if (!Array.isArray(value)) return [];
+
+  const kept: StoredAction[] = [];
+
+  for (const entry of value) {
+    if (kept.length === MAX_ACTIONS) break;
+    if (!entry || typeof entry !== "object") continue;
+
+    const raw = entry as Record<string, unknown>;
+    const tool = text(raw.tool);
+    const summary = text(raw.summary);
+    if (!tool || !summary) continue;
+
+    const source = (raw.args ?? {}) as Record<string, unknown>;
+    const args: Record<string, string | string[]> = {};
+
+    for (const [key, item] of Object.entries(source)) {
+      const parsed = argValue(item);
+      if (parsed !== null) args[key] = parsed;
+    }
+
+    kept.push({ tool, args, summary, state: asState(raw.state) });
+  }
+
+  return kept;
 }

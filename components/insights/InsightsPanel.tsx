@@ -4,8 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { analyzeResume, analyzeRoleGap } from "@/actions/insights-action";
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
+import { previewAction, weakPhraseAction } from "@/libs/agent/actions";
 import { formatRelativeTime } from "@/libs/formatRelativeTime";
-import { hashText, type Keyword, type ResumeAnalysis, type RoleGap as RoleGapResult } from "@/libs/insights/insightSchema";
+import { hashText, type Keyword, type ResumeAnalysis, type RoleGap as RoleGapResult, type WeakPhrase } from "@/libs/insights/insightSchema";
 import {
   saveAnalysis,
   saveRoleGap,
@@ -20,6 +21,7 @@ import {
 import {
   subscribeToResume,
   subscribeToResumes,
+  updateResume,
   type ResumeRecord,
   type ResumeSummary,
 } from "@/libs/resume/resumeService";
@@ -91,6 +93,7 @@ export default function InsightsPanel() {
   const [view, setView] = useState<KeywordView>("cloud");
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
   const [pending, setPending] = useState<"analysis" | "gap" | null>(null);
+  const [applyingKey, setApplyingKey] = useState<string | null>(null);
 
   const [now, setNow] = useState(() => Date.now());
 
@@ -210,6 +213,67 @@ export default function InsightsPanel() {
     [user, resumeId, blocks, sourceHash, notify],
   );
 
+  /**
+   * The one place an insight becomes an edit. Everything it needs is already
+   * on screen — no new fetch, and no second LLM call: the rewrite was produced
+   * by the analysis and has been sitting in Firestore unused.
+   */
+  const applyWeakPhrase = useCallback(
+    async (weak: WeakPhrase, key: string) => {
+      if (!user || !resumeId || !resume) return;
+
+      // Stale means the analysis describes a resume that has since moved, so
+      // its block offsets are no longer trustworthy.
+      if (analysis && analysis.sourceHash !== sourceHash) {
+        notify({
+          variant: "error",
+          message: "Re-run the analysis before applying its suggestions.",
+        });
+        return;
+      }
+
+      const outcome = previewAction(resume.document, weakPhraseAction(weak));
+
+      if (!outcome.ok) {
+        notify({
+          variant: "error",
+          message:
+            outcome.blocker === "unsupported"
+              ? "That line has to be edited in the resume editor."
+              : "That wording has changed since the analysis.",
+        });
+        return;
+      }
+
+      setApplyingKey(key);
+      try {
+        const next = outcome.preview.apply(resume.document);
+
+        if (!next) {
+          notify({
+            variant: "error",
+            message: "That wording has changed since the analysis.",
+          });
+          return;
+        }
+
+        await updateResume(user.uid, resumeId, { document: next });
+        notify({ variant: "success", message: "Applied to your resume" });
+      } catch (caught) {
+        notify({
+          variant: "error",
+          message:
+            caught instanceof Error
+              ? caught.message
+              : "Could not apply that change.",
+        });
+      } finally {
+        setApplyingKey(null);
+      }
+    },
+    [user, resumeId, resume, analysis, sourceHash, notify],
+  );
+
   if (authLoading || resumes === null) {
     return <Message>Loading your resumes…</Message>;
   }
@@ -289,6 +353,10 @@ export default function InsightsPanel() {
                 keywords={analysis.keywords}
                 signals={analysis.signals}
                 blocks={blockMap}
+                document={resume?.document ?? null}
+                stale={stale}
+                applyingKey={applyingKey}
+                onApply={applyWeakPhrase}
               />
 
               <ViewSwitcher

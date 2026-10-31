@@ -45,9 +45,18 @@ function letterDoc(userId: string, letterId: string) {
 
 export async function createCoverLetter(
   userId: string,
-  options: { title?: string; templateId?: CoverLetterTemplateId } = {},
+  options: {
+    title?: string;
+    templateId?: CoverLetterTemplateId;
+    /** A drafted letter, so writing one is a single create rather than a
+     *  create followed by an update. Normalized on the way in: the agent is
+     *  one of its callers. */
+    document?: CoverLetterDocument;
+  } = {},
 ): Promise<string> {
-  const document = createEmptyCoverLetterDocument();
+  const document = options.document
+    ? normalizeCoverLetterDocument(options.document)
+    : createEmptyCoverLetterDocument();
   if (options.templateId) document.templateId = options.templateId;
 
   const created = await addDoc(lettersCollection(userId), {

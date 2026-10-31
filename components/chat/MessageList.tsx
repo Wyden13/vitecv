@@ -1,5 +1,6 @@
 import type { ChatMessageRecord } from "@/libs/chat/chatSchema";
 
+import MessageActions from "../agent/MessageActions";
 import AttachmentChips from "./AttachmentChips";
 import SuggestLink from "./SuggestLink";
 
@@ -35,6 +36,12 @@ function Bubble({
 
         {/* Filenames only — the extracted body stays out of the transcript. */}
         <AttachmentChips attachments={message.attachments} />
+
+        {/* Client island: the write has to happen in the browser, under
+            firestore.rules, even though this transcript is server-rendered. */}
+        {!mine && (
+          <MessageActions messageId={message.id} actions={message.actions} />
+        )}
 
         {!mine && message.suggestHref && message.suggestLabel && (
           <SuggestLink
