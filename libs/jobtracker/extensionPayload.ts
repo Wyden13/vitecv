@@ -9,6 +9,7 @@
 import {
   DEFAULT_JOB_STATUS,
   asStatus,
+  isHttpUrl,
   text,
   type JobApplicationInput,
   type JobApplicationStatus,
@@ -81,14 +82,6 @@ function statusFromExtension(value: unknown): JobApplicationStatus {
   return STATUS_FROM_EXTENSION[raw] ?? asStatus(text(value).toLowerCase());
 }
 
-function isHttpUrl(value: string): boolean {
-  try {
-    return ["http:", "https:"].includes(new URL(value).protocol);
-  } catch {
-    return false;
-  }
-}
-
 export type ParseResult =
   | { ok: true; value: JobApplicationInput }
   | { ok: false; error: string };
@@ -129,6 +122,11 @@ export function parseExtensionJob(payload: unknown): ParseResult {
       appliedDate: null,
       matchScore: null,
       nextAction: "",
+      notes: "",
+
+      // Deliberately not in REFRESHABLE_FIELDS: if you look up what a job
+      // pays and type it in, a re-clip of the posting must not wipe it.
+      salary: "",
     },
   };
 }
