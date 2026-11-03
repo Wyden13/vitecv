@@ -176,29 +176,15 @@ export default function JobTrackerPage() {
             label="Tracker views"
           />
 
-          {!formOpen && (
-            <Button
-              variant="primary"
-              className="border-dashed"
-              icon={<PlusIcon className="size-4" />}
-              onClick={() => setFormOpen(true)}
-            >
-              Add application
-            </Button>
-          )}
+          <Button
+            variant="primary"
+            className="border-dashed"
+            icon={<PlusIcon className="size-4" />}
+            onClick={() => setFormOpen(true)}
+          >
+            Add application
+          </Button>
         </div>
-
-        {formOpen && (
-          <div className="mt-3">
-            <JobTrackerForm
-              key={editing?.id ?? "new"}
-              editing={editing}
-              saving={saving}
-              onClose={closeForm}
-              onSubmit={(input) => void handleSubmit(input)}
-            />
-          </div>
-        )}
 
         <div className="mt-4">
           <Content
@@ -218,6 +204,23 @@ export default function JobTrackerPage() {
             onDelete={(application) => void handleDelete(application)}
           />
         </div>
+
+        {/*
+          Still mounted conditionally even though Sheet takes `open`: the
+          `key` remount is what reseeds the draft, and without the unmount an
+          Add -> Cancel -> Add round trip would keep the same key and reopen
+          on the abandoned draft.
+        */}
+        {formOpen && (
+          <JobTrackerForm
+            key={editing?.id ?? "new"}
+            open
+            editing={editing}
+            saving={saving}
+            onClose={closeForm}
+            onSubmit={(input) => void handleSubmit(input)}
+          />
+        )}
       </div>
     </PageShell>
   );

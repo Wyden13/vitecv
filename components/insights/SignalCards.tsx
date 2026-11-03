@@ -1,24 +1,51 @@
 "use client";
 
 import {
+  previewAction,
+  weakPhraseAction,
+  type ActionBlocker,
+} from "@/libs/agent/actions";
+import {
   KEYWORD_CATEGORIES,
   type Keyword,
+  type WeakPhrase,
   type WritingSignals,
 } from "@/libs/insights/insightSchema";
 import type { TextBlock } from "@/libs/insights/resumeText";
+import type { ResumeDocument } from "@/libs/resume/resumeSchema";
+import ActionCard from "../agent/ActionCard";
 import Meter from "../Meter";
 import StatTile from "../StatTile";
+
+/** Blocker copy lives here, with the rest of the user-facing wording. */
+const BLOCKED: Record<ActionBlocker, string> = {
+  changed: "This wording has changed since the analysis.",
+  unsupported: "Edit this one in the resume editor.",
+  invalid: "This suggestion is incomplete.",
+};
+
+const STALE = "Re-run the analysis to apply this.";
 
 export interface SignalCardsProps {
   keywords: Keyword[];
   signals: WritingSignals;
   blocks: Map<string, TextBlock>;
+  /** Null while the resume is still loading. */
+  document: ResumeDocument | null;
+  /** The analysis no longer describes the resume, so its offsets may be wrong. */
+  stale: boolean;
+  applyingKey: string | null;
+  onApply: (weak: WeakPhrase, key: string) => void;
 }
 
 export default function SignalCards({
   keywords,
   signals,
   blocks,
+  document,
+  stale,
+  applyingKey,
+  onApply,
 }: SignalCardsProps) {
   const categoriesCovered = KEYWORD_CATEGORIES.filter((category) =>
     keywords.some((keyword) => keyword.category === category),
@@ -61,22 +88,37 @@ export default function SignalCards({
           </h3>
 
           <ul className="mt-2 flex flex-col gap-2">
-            {signals.weakPhrases.map((weak, index) => (
-              <li
-                key={`${weak.blockId}-${index}`}
-                className="rounded-lg border border-zinc-200 px-3 py-2 dark:border-zinc-800"
-              >
-                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                  {blocks.get(weak.blockId)?.label ?? "Resume"}
-                </p>
-                <p className="mt-0.5 text-sm text-zinc-500 line-through dark:text-zinc-400">
-                  {weak.phrase}
-                </p>
-                <p className="mt-0.5 text-sm text-zinc-900 dark:text-zinc-50">
-                  {weak.suggestion}
-                </p>
-              </li>
-            ))}
+            {signals.weakPhrases.map((weak, index) => {
+              const key = `${weak.blockId}-${index}`;
+              const outcome = document
+                ? previewAction(document, weakPhraseAction(weak))
+                : null;
+
+              // Falls back to the phrase alone when the action cannot run, so
+              // the finding is still readable even where Apply is withheld.
+              const before = outcome?.ok ? outcome.preview.before : weak.phrase;
+              const after = outcome?.ok
+                ? outcome.preview.after
+                : weak.suggestion;
+
+              const unavailable = stale
+                ? STALE
+                : outcome && !outcome.ok
+                  ? BLOCKED[outcome.blocker]
+                  : undefined;
+
+              return (
+                <ActionCard
+                  key={key}
+                  title={blocks.get(weak.blockId)?.label ?? "Resume"}
+                  before={before}
+                  after={after}
+                  applying={applyingKey === key}
+                  unavailable={unavailable}
+                  onApply={() => onApply(weak, key)}
+                />
+              );
+            })}
           </ul>
         </div>
       )}

@@ -4,16 +4,11 @@ import { useEffect, useId, useRef } from "react";
 
 import { XIcon } from "./icons";
 
-/**
- * A right-anchored drawer. Sits at `z-40`, below the `z-50` toast stack, so a
- * save confirmation is still readable over an open panel.
- */
 export interface SheetProps {
   open: boolean;
   title: string;
   description?: string;
   onClose: () => void;
-  /** Action row pinned under the scroll area — usually Cancel plus Save. */
   footer?: React.ReactNode;
   children: React.ReactNode;
 }
@@ -31,9 +26,6 @@ export default function Sheet({
   const close = useRef(onClose);
   const headingId = useId();
   const descriptionId = useId();
-
-  // Read through a ref so an inline `onClose` cannot retrigger the effect below
-  // on every render, which would fight the user for focus.
   useEffect(() => {
     close.current = onClose;
   });

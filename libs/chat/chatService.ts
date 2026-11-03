@@ -5,9 +5,12 @@ import { FieldValue, type Timestamp } from "firebase-admin/firestore";
 import { getAdminDb } from "@/libs/firebase/admin";
 import {
   normalizeAttachments,
+  normalizeStoredActions,
+  type ActionState,
   type ChatAttachment,
   type ChatMessageRecord,
   type ChatRole,
+  type StoredAction,
 } from "./chatSchema";
 
 /**
@@ -58,6 +61,7 @@ export async function readThread(uid: string): Promise<ChatMessageRecord[]> {
       suggestLabel:
         typeof data.suggestLabel === "string" ? data.suggestLabel : "",
       suggestHref: typeof data.suggestHref === "string" ? data.suggestHref : "",
+      actions: normalizeStoredActions(data.actions),
       createdAt: toDate(data.createdAt),
     };
   });
@@ -71,6 +75,7 @@ export async function appendMessage(
     attachments?: ChatAttachment[];
     suggestLabel?: string;
     suggestHref?: string;
+    actions?: StoredAction[];
   },
 ): Promise<void> {
   await messagesCollection(uid).add({
@@ -79,8 +84,33 @@ export async function appendMessage(
     attachments: message.attachments ?? [],
     suggestLabel: message.suggestLabel ?? "",
     suggestHref: message.suggestHref ?? "",
+    actions: message.actions ?? [],
     createdAt: FieldValue.serverTimestamp(),
   });
+}
+
+/**
+ * Records what became of one proposal.
+ *
+ * The whole array is rewritten because Firestore cannot update an element of
+ * an array in place. Re-read first so a second tab confirming a different
+ * action on the same turn is not overwritten by a stale copy.
+ */
+export async function setActionState(
+  uid: string,
+  messageId: string,
+  index: number,
+  state: ActionState,
+): Promise<void> {
+  const ref = messagesCollection(uid).doc(messageId);
+  const snapshot = await ref.get();
+  if (!snapshot.exists) return;
+
+  const actions = normalizeStoredActions(snapshot.data()?.actions);
+  if (index < 0 || index >= actions.length) return;
+
+  actions[index] = { ...actions[index], state };
+  await ref.update({ actions });
 }
 
 /** Wipes the thread — used by both "new chat" and the Clear button. */

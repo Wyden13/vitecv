@@ -1,9 +1,4 @@
 @import "tailwindcss";
-
-/* `dark:` follows the `data-theme` attribute on <html>, not the OS. The inline
-   script in app/layout.tsx resolves the "system" preference to a concrete
-   light/dark value before first paint, so this attribute is the single source
-   of truth and no prefers-color-scheme branch is needed below. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
