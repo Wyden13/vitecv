@@ -58,10 +58,34 @@ export class TypstEngineError extends Error {
 export const isEngineError = (err: unknown): err is TypstEngineError =>
   err instanceof TypstEngineError;
 
-function explainEngineFailure(err: unknown): string {
+/**
+ * Only called after a failed start, so the extra requests cost nothing on the
+ * happy path. typst.ts hands a 404'd wasm straight to
+ * `WebAssembly.instantiateStreaming`, which rejects with "Unexpected response
+ * MIME type" and reads as a browser problem; this names the missing file.
+ */
+async function missingWasmAssets(): Promise<string[]> {
+  const checked = await Promise.all(
+    [WASM_COMPILER, WASM_RENDERER].map(async (url) => {
+      try {
+        const res = await fetch(url, { method: "HEAD", cache: "no-cache" });
+        return res.status === 404 ? url : null;
+      } catch {
+        return url;
+      }
+    }),
+  );
+  return checked.filter((url): url is string => url !== null);
+}
+
+async function explainEngineFailure(err: unknown): Promise<string> {
   const raw = err instanceof Error ? err.message : String(err);
   if (/unsafe-eval|Content Security Policy|trusted-types/i.test(raw)) {
     return "The browser's security policy blocked the preview engine from starting. Reload the page; if it persists, report it.";
+  }
+  const missing = await missingWasmAssets();
+  if (missing.length > 0) {
+    return `The preview engine could not download ${missing.join(" and ")}. Running locally? Run \`npm install\` to copy the WebAssembly binaries into public/typst/wasm.`;
   }
   if (/Failed to fetch|NetworkError|Load failed|404|503/i.test(raw)) {
     return `A file the preview engine needs could not be downloaded (${raw}). Check your connection and try again.`;
@@ -108,12 +132,11 @@ async function init(): Promise<TypstInstance> {
 /** Idempotent: loads wasm, fonts and template sources once. Re-armed on failure, so a retry starts clean. */
 export function ensureTypst(): Promise<TypstInstance> {
   if (!instancePromise) {
-    instancePromise = init().catch((err: unknown) => {
+    instancePromise = init().catch(async (err: unknown) => {
       instancePromise = null;
       console.error("[typst] engine failed to start:", err);
-      throw err instanceof TypstEngineError
-        ? err
-        : new TypstEngineError(explainEngineFailure(err), { cause: err });
+      if (err instanceof TypstEngineError) throw err;
+      throw new TypstEngineError(await explainEngineFailure(err), { cause: err });
     });
   }
   return instancePromise;

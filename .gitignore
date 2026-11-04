@@ -41,5 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# typst wasm binaries, copied from node_modules by scripts/copy-typst-wasm.mjs
+# wasm binaries, copied from node_modules by scripts/copy-wasm.mjs
 /public/typst/wasm/
+/public/pdfjs/wasm/

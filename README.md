@@ -93,8 +93,11 @@ ResumeDocument --toTypstResume()--> JSON --sys.inputs.doc--> public/typst/main.t
   Typst. Fonts are vendored in `public/typst/fonts` (Geist, Source Serif 4,
   EB Garamond — OFL; TeX Gyre Termes — GUST, standing in for Times New Roman).
 - `libs/typst/client.ts` loads the engine once and serializes compiles.
-- `npm install` runs `scripts/copy-typst-wasm.mjs`, which copies the wasm
-  binaries into `public/typst/wasm` (gitignored).
+- `npm install`, `npm run dev` and `npm run build` each run
+  `scripts/copy-wasm.mjs`, which copies the wasm binaries into
+  `public/typst/wasm` (and pdfjs's into `public/pdfjs/wasm`; both gitignored).
+  It exits non-zero when a binary is missing, so a stale checkout fails in the
+  terminal rather than as a bad-MIME-type error in the browser.
 
 **Adding a template:** write `public/typst/templates/<resume|letter>/<id>.typ`
 exporting `render(data)`, add it to `public/typst/main.typ` and to `SOURCES`

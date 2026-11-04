@@ -93,6 +93,9 @@ async function extractPDF(file: File): Promise<string> {
 
   const loadingTask = pdfjs.getDocument({
     data: new Uint8Array(buffer),
+    // pdfjs defaults to a *relative* "wasm", which resolves against the
+    // current route and 404s. Copied into public/ by scripts/copy-wasm.mjs.
+    wasmUrl: "/pdfjs/wasm/",
   });
 
   const pdf = await loadingTask.promise;
