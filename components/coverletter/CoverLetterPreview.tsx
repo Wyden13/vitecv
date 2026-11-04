@@ -1,5 +1,8 @@
+"use client";
+
 import type { CoverLetterDocument } from "@/libs/coverletter/coverLetterSchema";
-import { themeStyle } from "@/libs/templateTheme";
+import { toTypstCoverLetter } from "@/libs/typst/coverLetterDoc";
+import TypstDocument from "../templates/TypstDocument";
 import { getCoverLetterTemplate } from "./templates/registry";
 
 export default function CoverLetterPreview({
@@ -7,15 +10,11 @@ export default function CoverLetterPreview({
 }: {
   document: CoverLetterDocument;
 }) {
-  const template = getCoverLetterTemplate(document.templateId);
-  const Template = template.component;
-
   return (
-    <div
-      className="doc-page doc-surface overflow-hidden bg-white text-zinc-900 shadow-lg [font-family:var(--tpl-body)]"
-      style={{ ...themeStyle(document.theme), ...template.pageStyle }}
-    >
-      <Template document={document} />
-    </div>
+    <TypstDocument
+      kind="letter"
+      template={getCoverLetterTemplate(document.templateId).id}
+      doc={toTypstCoverLetter(document)}
+    />
   );
 }

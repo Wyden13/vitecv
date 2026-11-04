@@ -141,21 +141,12 @@ body {
 /* ---------------------------------------------------------------------------
    Document page
 
-   Shared by resume and cover-letter previews, which is why the name is not
-   resume-specific. The preview renders at true Letter dimensions so that what
-   is on screen is exactly what prints. `--doc-scale` shrinks it to fit the
-   preview pane; printing resets it to 1.
-
-   Padding is a variable so a full-bleed template — Modern's tinted sidebar —
-   can zero it out and supply its own insets instead.
+   Shared by resume and cover-letter previews. Documents are typeset by Typst
+   in the browser (components/templates/TypstDocument.tsx) and shown as
+   Letter-sized sheets at true size, so what is on screen is exactly what the
+   PDF download contains. `--doc-scale` shrinks them to fit the preview pane;
+   printing resets it to 1.
    --------------------------------------------------------------------------- */
-
-.doc-page {
-  width: 8.5in;
-  min-height: 11in;
-  padding: var(--page-pad-y, 0.6in) var(--page-pad-x, 0.7in);
-  box-sizing: border-box;
-}
 
 .doc-page-scaler {
   --doc-scale: 0.62;
@@ -192,9 +183,5 @@ body {
   .doc-page-scaler {
     --doc-scale: 1;
     margin-bottom: 0;
-  }
-
-  .doc-page {
-    box-shadow: none;
   }
 }

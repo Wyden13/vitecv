@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
+import { usePdfDownload } from "@/hooks/usePdfDownload";
 import type {
   CoverLetterDocument,
   CoverLetterTemplateId,
@@ -14,6 +15,7 @@ import {
 } from "@/libs/coverletter/coverLetterService";
 import { isCoverLetterEmpty, SAMPLE_COVER_LETTER } from "@/data/sampleDocuments";
 import type { DocumentTheme } from "@/libs/templateTheme";
+import { toTypstCoverLetter } from "@/libs/typst/coverLetterDoc";
 import EditorHeader, { type EditorTab } from "../resume/EditorHeader";
 import PreviewPane from "../resume/PreviewPane";
 import SplitPane from "../resume/SplitPane";
@@ -21,7 +23,7 @@ import DocumentThumbnail from "../templates/DocumentThumbnail";
 import StylePanel from "../templates/StylePanel";
 import CoverLetterFields from "./CoverLetterFields";
 import CoverLetterPreview from "./CoverLetterPreview";
-import { COVER_LETTER_TEMPLATE_LIST } from "./templates/registry";
+import { getCoverLetterTemplate, COVER_LETTER_TEMPLATE_LIST } from "./templates/registry";
 
 const AUTOSAVE_DELAY = 800;
 
@@ -48,6 +50,7 @@ export default function CoverLetterEditor({
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dirty = useRef(false);
+  const { download, downloading } = usePdfDownload();
 
   useEffect(() => {
     if (!user) return;
@@ -135,6 +138,15 @@ export default function CoverLetterEditor({
         onTitleChange={(title) => edit({ ...draft, title })}
         activeTab={tab}
         onTabChange={setTab}
+        onDownload={() =>
+          void download(
+            "letter",
+            getCoverLetterTemplate(document.templateId).id,
+            toTypstCoverLetter(document),
+            [draft.title, document.sender.name, "Cover letter"],
+          )
+        }
+        downloading={downloading}
         backHref="/cv"
         backLabel="Cover letters"
         titleLabel="Cover letter title"

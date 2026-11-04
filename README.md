@@ -69,11 +69,41 @@ state against `firestore.rules` — that is the real data boundary.
 | `libs/resumeSchema.ts` | `ResumeDocument` shape shared by editor and preview |
 | `libs/resumeService.ts` | All Firestore reads/writes for resumes |
 | `components/resume/` | The two-pane resume editor |
+| `libs/typst/` | Typst engine (browser), document → Typst JSON, theme mapping |
+| `public/typst/` | Typst entry point, templates and vendored fonts |
 | `proxy.ts` | Optimistic route gate (Next 16 renamed `middleware` → `proxy`) |
+
+## Previews and PDF download (Typst)
+
+Resumes and cover letters are typeset by [Typst](https://typst.app) compiled
+to WebAssembly ([typst.ts](https://github.com/Myriad-Dreamin/typst.ts)) and
+run in the browser. The preview, the template thumbnails and the **Download**
+button all use the same engine, so the PDF is exactly what the preview shows:
+real text, clickable links, no print dialog.
+
+```
+ResumeDocument --toTypstResume()--> JSON --sys.inputs.doc--> public/typst/main.typ
+                                                               --> templates/resume/<id>.typ
+```
+
+- `libs/typst/resumeDoc.ts` / `coverLetterDoc.ts` are the only place a
+  document is shaped for Typst (empty rows dropped, dates and links
+  formatted). Templates are pure styling.
+- `libs/typst/theme.ts` maps the Style panel (accent, font pair, sizes) to
+  Typst. Fonts are vendored in `public/typst/fonts` (Geist, Source Serif 4,
+  EB Garamond — OFL; TeX Gyre Termes — GUST, standing in for Times New Roman).
+- `libs/typst/client.ts` loads the engine once and serializes compiles.
+- `npm install` runs `scripts/copy-typst-wasm.mjs`, which copies the wasm
+  binaries into `public/typst/wasm` (gitignored).
+
+**Adding a template:** write `public/typst/templates/<resume|letter>/<id>.typ`
+exporting `render(data)`, add it to `public/typst/main.typ` and to `SOURCES`
+in `libs/typst/client.ts`, then add the id to the schema and the template
+registry as before. The same files compile with the Typst CLI (see the header of
+`main.typ`).
 
 ## Known gaps
 
 - Uploading extracts text (`libs/extractFile.ts`) but does not parse it into
   sections — the editor starts empty and is filled in by hand.
-- Style tab, ATS scoring, "Guide me", Job Match, and Download are laid out but
-  not implemented. Printing (`Cmd/Ctrl+P`) produces a correct resume page today.
+- ATS scoring, "Guide me" and Job Match are laid out but not implemented.

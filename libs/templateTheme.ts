@@ -1,5 +1,3 @@
-import type { CSSProperties } from "react";
-
 export type AccentId =
   | "sky"
   | "emerald"
@@ -94,18 +92,4 @@ export function normalizeTheme(
       ? (value.bodySize as BodySize)
       : DEFAULT_THEME.bodySize,
   };
-}
-
-export function themeStyle(theme: DocumentTheme): CSSProperties {
-  const accent = ACCENTS[theme.accent] ?? ACCENTS[DEFAULT_THEME.accent];
-  const fonts = FONT_PAIRS[theme.fontPair] ?? FONT_PAIRS[DEFAULT_THEME.fontPair];
-
-  return {
-    "--tpl-accent": accent.value,
-    "--tpl-accent-soft": accent.soft,
-    "--tpl-heading": fonts.heading,
-    "--tpl-body": fonts.body,
-    "--tpl-heading-size": `${theme.headingSize ?? DEFAULT_THEME.headingSize}pt`,
-    "--tpl-body-size": `${theme.bodySize ?? DEFAULT_THEME.bodySize}pt`,
-  } as CSSProperties;
 }
