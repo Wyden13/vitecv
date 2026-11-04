@@ -26,6 +26,10 @@ export function proxy(request: NextRequest) {
 }
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // `typst/` is the preview engine's static assets (wasm, fonts, .typ
+    // sources) in public/typst: fetched on every editor load, never gated.
+    // `.wasm` anywhere is a binary the browser instantiates, never a page: a
+    // login redirect would surface as an opaque bad-MIME-type failure.
+    "/((?!_next/static|_next/image|favicon.ico|typst/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|wasm)$).*)",
   ],
 };

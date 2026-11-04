@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
+import { usePdfDownload } from "@/hooks/usePdfDownload";
 import {
   subscribeToResume,
   updateResume,
@@ -11,6 +12,7 @@ import {
 import type { ResumeDocument, ResumeTemplateId } from "@/libs/resume/resumeSchema";
 import { isResumeEmpty, SAMPLE_RESUME } from "@/data/sampleDocuments";
 import type { DocumentTheme } from "@/libs/templateTheme";
+import { toTypstResume } from "@/libs/typst/resumeDoc";
 import DocumentThumbnail from "../templates/DocumentThumbnail";
 import StylePanel from "../templates/StylePanel";
 import EditorHeader, { type EditorTab } from "./EditorHeader";
@@ -18,7 +20,7 @@ import PreviewPane from "./PreviewPane";
 import ResumePreview from "./ResumePreview";
 import SectionList from "./SectionList";
 import SplitPane from "./SplitPane";
-import { RESUME_TEMPLATE_LIST } from "./templates/registry";
+import { getResumeTemplate, RESUME_TEMPLATE_LIST } from "./templates/registry";
 
 const AUTOSAVE_DELAY = 800;
 
@@ -41,6 +43,7 @@ export default function ResumeEditor({ resumeId }: ResumeEditorProps) {
   const [missing, setMissing] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dirty = useRef(false);
+  const { download, downloading } = usePdfDownload();
 
   useEffect(() => {
     if (!user) return;
@@ -133,6 +136,15 @@ export default function ResumeEditor({ resumeId }: ResumeEditorProps) {
         onTitleChange={(title) => edit({ ...draft, title })}
         activeTab={tab}
         onTabChange={setTab}
+        onDownload={() =>
+          void download(
+            "resume",
+            getResumeTemplate(document.templateId).id,
+            toTypstResume(document),
+            [draft.title, document.profile.name, "Resume"],
+          )
+        }
+        downloading={downloading}
         saving={saving}
         savedAt={savedAt}
         error={error}

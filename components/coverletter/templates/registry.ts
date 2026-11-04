@@ -1,19 +1,14 @@
-import type { ComponentType, CSSProperties } from "react";
-
-import type {
-  CoverLetterDocument,
-  CoverLetterTemplateId,
-} from "@/libs/coverletter/coverLetterSchema";
+import type { CoverLetterTemplateId } from "@/libs/coverletter/coverLetterSchema";
 import { DEFAULT_COVER_LETTER_TEMPLATE } from "@/libs/coverletter/coverLetterSchema";
-import Formal from "./Formal";
-import ModernLetter from "./ModernLetter";
 
+/**
+ * Each id is typeset by public/typst/templates/letter/<id>.typ (registered in
+ * public/typst/main.typ and libs/typst/client.ts).
+ */
 export interface CoverLetterTemplate {
   id: CoverLetterTemplateId;
   name: string;
   description: string;
-  component: ComponentType<{ document: CoverLetterDocument }>;
-  pageStyle?: CSSProperties;
 }
 
 export const COVER_LETTER_TEMPLATES: Record<
@@ -25,15 +20,12 @@ export const COVER_LETTER_TEMPLATES: Record<
     name: "Formal",
     description:
       "Traditional block letter with a sender header, date and recipient address.",
-    component: Formal,
   },
   modernLetter: {
     id: "modernLetter",
     name: "Modern letter",
     description:
       "Tinted header band that matches the Modern resume, for a matching set.",
-    component: ModernLetter,
-    pageStyle: { "--page-pad-x": "0in", "--page-pad-y": "0in" } as CSSProperties,
   },
 };
 

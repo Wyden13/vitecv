@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import Button from "../Button";
-import { DownloadIcon } from "../icons";
+import { DownloadIcon, SpinnerIcon } from "../icons";
 import SaveState, { type SaveStateProps } from "./SaveState";
 
 export type EditorTab = "editor" | "style";
@@ -18,6 +18,9 @@ export interface EditorHeaderProps extends SaveStateProps {
   onTitleChange: (title: string) => void;
   activeTab: EditorTab;
   onTabChange: (tab: EditorTab) => void;
+  /** Typesets the document and downloads it as a PDF. */
+  onDownload: () => void;
+  downloading?: boolean;
   backHref?: string;
   backLabel?: string;
   titleLabel?: string;
@@ -28,6 +31,8 @@ export default function EditorHeader({
   onTitleChange,
   activeTab,
   onTabChange,
+  onDownload,
+  downloading = false,
   backHref = "/resume",
   backLabel = "Resume builder",
   titleLabel = "Resume title",
@@ -64,9 +69,17 @@ export default function EditorHeader({
           <Button
             variant="primary"
             size="sm"
-            onClick={() => window.print()}
-            title="Print or save as PDF"
-            icon={<DownloadIcon className="size-4" />}
+            onClick={onDownload}
+            disabled={downloading}
+            aria-busy={downloading}
+            title="Download as PDF"
+            icon={
+              downloading ? (
+                <SpinnerIcon className="size-4" />
+              ) : (
+                <DownloadIcon className="size-4" />
+              )
+            }
           >
             Download
           </Button>
