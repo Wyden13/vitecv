@@ -11,6 +11,7 @@ import {
 } from "@/constants";
 import { getAdminAuth } from "@/libs/firebase/admin";
 import { getCurrentUser } from "@/libs/dal";
+import { revokePairingCodes } from "@/libs/jobtracker/extensionToken";
 import { readSessionCookie } from "@/libs/session";
 
 export interface SessionError {
@@ -105,6 +106,7 @@ export async function removeSession() {
       const adminAuth = getAdminAuth();
       const decoded = await adminAuth.verifySessionCookie(cookie);
       await adminAuth.revokeRefreshTokens(decoded.uid);
+      await revokePairingCodes(decoded.uid);
     } catch(error) {
       console.error(error);
     }

@@ -1,8 +1,8 @@
 import "server-only";
 
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, randomInt } from "node:crypto";
 
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 
 import { getAdminDb } from "@/libs/firebase/admin";
 
@@ -28,6 +28,19 @@ const TOKEN_LABEL = "vcv_";
 /** Enough of the token to recognise it in the UI, never enough to use it. */
 const PREFIX_LENGTH = TOKEN_LABEL.length + 8;
 
+const CODES_COLLECTION = "extensionPairingCodes";
+/** No I, O, 0 or 1 — a code read off a screen and typed by hand. */
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const CODE_LENGTH = 8;
+
+function normalizeCode(code: string): string {
+  return code.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function hashCode(code: string): string {
+  return createHash("sha256").update(normalizeCode(code)).digest("hex");
+}
+
 function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -44,6 +57,7 @@ function pointerDoc(uid: string) {
 export interface ExtensionTokenInfo {
   prefix: string;
   createdAt: string | null;
+  lastUsedAt: string | null;
 }
 
 /**
@@ -84,15 +98,101 @@ export async function issueExtensionToken(uid: string): Promise<string> {
 export async function readExtensionTokenInfo(
   uid: string,
 ): Promise<ExtensionTokenInfo | null> {
-  const snapshot = await pointerDoc(uid).get();
-  const data = snapshot.data();
+  const data = (await pointerDoc(uid).get()).data();
 
   if (!data || typeof data.prefix !== "string") return null;
+
+  const used =
+    typeof data.tokenHash === "string"
+      ? await getAdminDb()
+          .collection(TOKENS_COLLECTION)
+          .doc(data.tokenHash)
+          .get()
+      : null;
 
   return {
     prefix: data.prefix,
     createdAt: data.createdAt?.toDate?.()?.toISOString() ?? null,
+    lastUsedAt: used?.data()?.lastUsedAt?.toDate?.()?.toISOString() ?? null,
   };
+}
+
+/** Deletes every outstanding pairing code for a user. */
+export async function revokePairingCodes(uid: string): Promise<void> {
+  const stale = await getAdminDb()
+    .collection(CODES_COLLECTION)
+    .where("uid", "==", uid)
+    .get();
+
+  await Promise.all(stale.docs.map((doc) => doc.ref.delete()));
+}
+
+/**
+ * Issues a single-use code the user types into the extension. It lasts until
+ * `expiresAt` (the session's own expiry) or until the user signs out, and a
+ * new code replaces any earlier one.
+ */
+export async function issuePairingCode(
+  uid: string,
+  expiresAt: Date,
+): Promise<{ code: string }> {
+  await revokePairingCodes(uid);
+
+  let code = "";
+  for (let i = 0; i < CODE_LENGTH; i++) {
+    code += CODE_ALPHABET[randomInt(CODE_ALPHABET.length)];
+  }
+
+  await getAdminDb()
+    .collection(CODES_COLLECTION)
+    .doc(hashCode(code))
+    .set({
+      uid,
+      createdAt: FieldValue.serverTimestamp(),
+      expiresAt: Timestamp.fromDate(expiresAt),
+    });
+
+  return { code: `${code.slice(0, 4)}-${code.slice(4)}` };
+}
+
+/**
+ * Trades a code for a fresh token, or returns null when it is unknown,
+ * expired or already used. Read and delete share one transaction so two
+ * simultaneous redemptions cannot both succeed.
+ */
+export async function redeemPairingCode(code: string): Promise<string | null> {
+  if (normalizeCode(code).length !== CODE_LENGTH) return null;
+
+  const db = getAdminDb();
+  const ref = db.collection(CODES_COLLECTION).doc(hashCode(code));
+
+  const uid = await db.runTransaction(async (tx) => {
+    const snapshot = await tx.get(ref);
+    if (!snapshot.exists) return null;
+
+    // Burn it even when expired, so a stale doc does not linger.
+    tx.delete(ref);
+
+    const data = snapshot.data();
+    const live =
+      data?.expiresAt instanceof Timestamp &&
+      data.expiresAt.toMillis() > Date.now();
+
+    return live && typeof data?.uid === "string" ? data.uid : null;
+  });
+
+  return uid ? issueExtensionToken(uid) : null;
+}
+
+/** Revokes the active token, which signs the extension out at once. */
+export async function revokeExtensionToken(uid: string): Promise<void> {
+  const pointer = pointerDoc(uid);
+  const hash = (await pointer.get()).data()?.tokenHash;
+
+  if (typeof hash === "string") {
+    await getAdminDb().collection(TOKENS_COLLECTION).doc(hash).delete();
+  }
+  await pointer.delete();
 }
 
 /** Resolves a token to its owner's uid, or null when unknown or revoked. */
