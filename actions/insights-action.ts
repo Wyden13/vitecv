@@ -2,40 +2,20 @@
 
 import { getCurrentUser } from "@/libs/dal";
 import { callGlmJson } from "@/libs/insights/glm";
+import { capBlocks, runJobMatch } from "@/libs/insights/matchCore";
 import {
   normalizeAnalysisPayload,
   normalizeGapPayload,
-  normalizeJobMatchPayload,
   type AnalysisPayload,
   type GapPayload,
   type JobMatchPayload,
 } from "@/libs/insights/insightSchema";
-import {
-  analysisMessages,
-  gapMessages,
-  jobMatchMessages,
-} from "@/libs/insights/prompts";
+import { analysisMessages, gapMessages } from "@/libs/insights/prompts";
 import {
   countBullets,
   serializeBlocks,
   type TextBlock,
 } from "@/libs/insights/resumeText";
-
-const MAX_CHARS = 20_000;
-const MAX_JD_CHARS = 12_000;
-
-function capBlocks(blocks: TextBlock[]): TextBlock[] {
-  const kept: TextBlock[] = [];
-  let total = 0;
-
-  for (const block of blocks) {
-    total += block.id.length + block.text.length + 4;
-    if (total > MAX_CHARS) break;
-    kept.push(block);
-  }
-
-  return kept;
-}
 
 async function requireSession(): Promise<void> {
   const user = await getCurrentUser();
@@ -88,13 +68,5 @@ export async function matchJob(
   description: string,
 ): Promise<JobMatchPayload & { model: string }> {
   await requireSession();
-  assertBlocks(blocks);
-
-  if (!description.trim()) throw new Error("Paste a job description first.");
-
-  const capped = capBlocks(blocks);
-  const { data, model } = await callGlmJson(
-    jobMatchMessages(serializeBlocks(capped), description.slice(0, MAX_JD_CHARS)),
-  );
-  return { ...normalizeJobMatchPayload(data), model };
+  return runJobMatch(blocks, description);
 }

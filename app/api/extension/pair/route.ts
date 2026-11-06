@@ -1,3 +1,4 @@
+import { rateLimit } from "@/libs/rateLimit";
 import { redeemPairingCode } from "@/libs/jobtracker/extensionToken";
 
 /**
@@ -23,7 +24,18 @@ export async function OPTIONS(): Promise<Response> {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
 
+const MINUTE_MS = 60 * 1000;
+
 export async function POST(request: Request): Promise<Response> {
+  // A code is 32^8 possibilities, but nothing else stops a script guessing.
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const limit = rateLimit(`pair:${ip}`, 10, MINUTE_MS);
+
+  if (!limit.ok) {
+    return json({ error: "Too many attempts. Wait a minute and retry." }, 429);
+  }
+
   let body: unknown;
 
   try {
