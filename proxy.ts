@@ -7,6 +7,7 @@ const PUBLIC_ROUTES = new Set<string>([LOGIN_ROUTE]);
 // session cookie, so the gate below must not redirect them to /login.
 const SELF_AUTHENTICATED_ROUTES = new Set<string>([
   "/api/jobs",
+  "/api/extension/pair",
   "/api/health/auth",
 ]);
 

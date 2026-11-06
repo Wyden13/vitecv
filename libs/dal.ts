@@ -11,6 +11,8 @@ export interface SessionUser {
   email: string | null;
   name: string | null;
   picture: string | null;
+  /** When the session cookie stops verifying, in epoch ms. */
+  sessionExpiresAt: number;
 }
 
 /**
@@ -42,6 +44,7 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       email: decoded.email ?? null,
       name: decoded.name ?? null,
       picture: decoded.picture ?? null,
+      sessionExpiresAt: decoded.exp * 1000,
     };
   } catch {
     return null;

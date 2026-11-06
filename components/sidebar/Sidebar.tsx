@@ -16,6 +16,7 @@ const SIDEBAR_ITEMS: NavItem[] = [
   { label: "Insights", href: "/insights" },
   { label: "Job Tracker", href: "/job-tracker" },
   { label: "Job Match", href: "/job-match" },
+  { label: "Extension", href: "/extension" },
 ];
 
 export default function Sidebar() {

@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
-import ExtensionPairing from "@/components/job-tracker/ExtensionPairing";
 import JobTrackerBoard from "@/components/job-tracker/JobTrackerBoard";
 import JobTrackerForm from "@/components/job-tracker/JobTrackerForm";
 import JobTrackerList from "@/components/job-tracker/JobTrackerList";
@@ -164,9 +164,16 @@ export default function JobTrackerPage() {
           Every role you are chasing, and what you owe it next.
         </p>
 
-        <div className="mt-4">
-          <ExtensionPairing />
-        </div>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          Saving jobs from other sites?{" "}
+          <Link
+            href="/extension"
+            className="font-medium text-accent hover:underline"
+          >
+            Connect the browser extension
+          </Link>
+          .
+        </p>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <ViewSwitcher
