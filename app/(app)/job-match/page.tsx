@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 
 import { matchJob } from "@/actions/insights-action";
 import Button from "@/components/Button";
@@ -13,6 +15,7 @@ import ResumePicker from "@/components/insights/ResumePicker";
 import { TextAreaField } from "@/components/resume/fields/Field";
 import { useToast } from "@/components/Toast";
 import { useFirebaseUser } from "@/hooks/useFirebaseUser";
+import { db } from "@/libs/firebase/firebase";
 import { takeHandoff } from "@/libs/handoff";
 import { hashText, type JobMatchPayload } from "@/libs/insights/insightSchema";
 import {
@@ -38,7 +41,17 @@ function forResume<T>(state: Keyed<T>, resumeId: string | null): T | null {
 }
 
 export default function JobMatchPage() {
+  // `useSearchParams` needs a Suspense boundary in a statically rendered page.
+  return (
+    <Suspense>
+      <JobMatchView />
+    </Suspense>
+  );
+}
+
+function JobMatchView() {
   const { user } = useFirebaseUser();
+  const jobId = useSearchParams().get("job");
   const { notify } = useToast();
 
   // Seeded from the dashboard composer when it routed a pasted posting here.
@@ -46,6 +59,27 @@ export default function JobMatchPage() {
   const [description, setDescription] = useState(
     () => takeHandoff()?.jobDescription ?? "",
   );
+
+  // `?job=<id>` comes from the extension's "Tailor my resume" button: fill the
+  // posting from the tracked job so nothing has to be pasted.
+  useEffect(() => {
+    if (!user || !jobId) return;
+
+    let cancelled = false;
+
+    getDoc(doc(db, "users", user.uid, "jobApplications", jobId))
+      .then((snapshot) => {
+        const text = snapshot.data()?.description;
+        if (!cancelled && typeof text === "string" && text.trim()) {
+          setDescription(text);
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, jobId]);
 
   const [resumes, setResumes] = useState<ResumeSummary[] | null>(null);
   const [resumeId, setResumeId] = useState<string | null>(null);

@@ -120,9 +120,9 @@ export default function ExtensionConnect() {
         <h2 className={TITLE}>Connect this browser</h2>
         <p className={MUTED}>Chrome only for now.</p>
         <p className={`mt-3 ${MUTED}`}>
-          Install the extension, open its popup and enter the code below. A code
-          works once and stays valid until you sign out or your session
-          expires.
+          Install the extension, open a job posting, click the viteCV tab on the
+          right edge of the page and enter the code below. A code works once
+          and expires after 10 minutes.
         </p>
 
         {code && (
@@ -131,7 +131,7 @@ export default function ExtensionConnect() {
               {code}
             </code>
             <span className="text-xs text-zinc-500">
-              Valid until you sign out
+              Expires in 10 minutes
             </span>
             <Button
               variant="ghost"

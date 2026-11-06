@@ -1,14 +1,16 @@
-import { createHash } from "node:crypto";
-
 import { FieldValue } from "firebase-admin/firestore";
 
 import { getAdminDb } from "@/libs/firebase/admin";
 import {
   REFRESHABLE_FIELDS,
-  canonicalJobUrl,
   parseExtensionJob,
 } from "@/libs/jobtracker/extensionPayload";
-import { resolveExtensionToken } from "@/libs/jobtracker/extensionToken";
+import {
+  authenticateExtension,
+  json,
+  jobDocumentId,
+  preflight,
+} from "@/libs/jobtracker/extensionApi";
 
 /**
  * Save endpoint for the browser extension.
@@ -18,70 +20,14 @@ import { resolveExtensionToken } from "@/libs/jobtracker/extensionToken";
  * cookie redirect, or the request would never arrive.
  */
 
-/**
- * `*` is safe here only because the credential is a header rather than a
- * cookie: there is no ambient authority for another origin to borrow. Adding
- * `Allow-Credentials` would be both pointless and incompatible with `*`.
- */
-const CORS_HEADERS: Record<string, string> = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Authorization, Content-Type",
-  "Access-Control-Max-Age": "86400",
-};
-
-function json(body: unknown, status: number): Response {
-  return Response.json(body, { status, headers: CORS_HEADERS });
-}
-
-function bearerToken(header: string | null): string {
-  const match = /^Bearer\s+(.+)$/i.exec(header?.trim() ?? "");
-  return match ? match[1].trim() : "";
-}
-
-/**
- * Document id derived from the posting URL so re-saving the same job updates
- * it. Without a URL there is nothing to dedupe on, so the caller gets a fresh
- * auto-id instead.
- */
-function documentId(url: string): string | null {
-  if (!url) return null;
-
-  return createHash("sha256")
-    .update(canonicalJobUrl(url))
-    .digest("hex")
-    .slice(0, 24);
-}
-
 export async function OPTIONS(): Promise<Response> {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
+  return preflight();
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const token = bearerToken(request.headers.get("authorization"));
-
-  if (!token) {
-    return json(
-      { error: "Missing Authorization: Bearer <token> header." },
-      401,
-    );
-  }
-
-  let uid: string | null;
-
-  try {
-    uid = await resolveExtensionToken(token);
-  } catch (error) {
-    console.error("[api/jobs] token lookup failed:", error);
-    return json({ error: "Could not verify the extension token." }, 500);
-  }
-
-  if (!uid) {
-    return json(
-      { error: "Unknown or revoked extension token. Generate a new one." },
-      401,
-    );
-  }
+  const auth = await authenticateExtension(request);
+  if ("error" in auth) return auth.error;
+  const { uid } = auth;
 
   let payload: unknown;
 
@@ -107,7 +53,7 @@ export async function POST(request: Request): Promise<Response> {
       .doc(uid)
       .collection("jobApplications");
 
-    const id = documentId(job.url);
+    const id = jobDocumentId(job.url);
     const ref = id ? collection.doc(id) : collection.doc();
     const existing = await ref.get();
 

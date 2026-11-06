@@ -7,8 +7,16 @@ service cloud.firestore {
     // This is the real data boundary: all resume reads and writes happen from
     // the browser with the client SDK, so these rules — not the session
     // cookie — are what keep one user's resumes away from another's.
-    match /users/{uid}/{document=**} {
+    match /users/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // `extension` is the one subcollection a client may not touch: it holds the
+    // pointer to the active extension token, which only the server may write.
+    match /users/{uid}/{sub}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == uid
+        && sub != 'extension';
     }
 
     // Everything else is denied by default — no catch-all match below this.
