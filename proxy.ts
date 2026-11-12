@@ -2,7 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { LOGIN_ROUTE, SESSION_COOKIE_NAME } from "@/constants";
 
-const PUBLIC_ROUTES = new Set<string>([LOGIN_ROUTE]);
+const PUBLIC_ROUTES = new Set<string>(["/", LOGIN_ROUTE]);
+// The screenshot demo (app/demo) renders fixtures, never user data, and is
+// compiled out of production builds; let it through only in development.
+const isDevDemo = (pathname: string) =>
+  process.env.NODE_ENV === "development" &&
+  (pathname === "/demo" || pathname.startsWith("/demo/"));
 // Routes that carry their own credential (a bearer token) rather than the
 // session cookie, so the gate below must not redirect them to /login.
 const SELF_AUTHENTICATED_ROUTES = new Set<string>([
@@ -18,7 +23,9 @@ export function proxy(request: NextRequest) {
 
   const hasSession = request.cookies.has(SESSION_COOKIE_NAME);
   const isPublic =
-    PUBLIC_ROUTES.has(pathname) || SELF_AUTHENTICATED_ROUTES.has(pathname);
+    PUBLIC_ROUTES.has(pathname) ||
+    SELF_AUTHENTICATED_ROUTES.has(pathname) ||
+    isDevDemo(pathname);
 
   if (!hasSession && !isPublic) {
     const url = request.nextUrl.clone();
@@ -33,6 +40,6 @@ export const config = {
     // sources) in public/typst: fetched on every editor load, never gated.
     // `.wasm` anywhere is a binary the browser instantiates, never a page: a
     // login redirect would surface as an opaque bad-MIME-type failure.
-    "/((?!_next/static|_next/image|favicon.ico|typst/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|wasm)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|typst/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|wasm|webmanifest)$).*)",
   ],
 };

@@ -26,7 +26,6 @@ import {
   type ResumeSummary,
 } from "@/libs/resume/resumeService";
 import Button from "../Button";
-import { SpinnerIcon } from "../icons";
 import { useToast } from "../Toast";
 import ViewSwitcher from "../ViewSwitcher";
 import EvidencePanel from "./EvidencePanel";
@@ -37,6 +36,7 @@ import KeywordViews, {
 import ResumePicker from "./ResumePicker";
 import RoleGap from "./RoleGap";
 import SignalCards from "./SignalCards";
+import SparkleSpinner from "../motion/SparkleSpinner";
 
 type Keyed<T> = { id: string; value: T } | null;
 
@@ -56,7 +56,7 @@ function Section({
   actions?: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800">
+    <section className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-xl">
           <h2 className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
@@ -311,7 +311,7 @@ export default function InsightsPanel() {
               disabled={analysing || empty}
               icon={
                 analysing ? (
-                  <SpinnerIcon className="size-4 animate-spin" />
+                  <SparkleSpinner />
                 ) : undefined
               }
               onClick={() => void runAnalysis()}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { buttonClasses } from "../Button";
 import CreateCoverLetterButton from "../coverletter/CreateCoverLetterButton";
 import {
   BriefcaseIcon,
@@ -12,8 +13,7 @@ import OptionCard from "../OptionCard";
 import CreateResumeButton from "../resume/CreateResumeButton";
 import ResumeUpload from "../ResumeUpload";
 
-const LINK_CLASS =
-  "inline-flex w-full items-center justify-center gap-2 rounded-md border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-900";
+const LINK_CLASS = buttonClasses("secondary", "md", "w-full");
 
 export default function QuickActions() {
   return (

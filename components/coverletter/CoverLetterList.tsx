@@ -12,6 +12,7 @@ import {
 import { formatRelativeTime } from "@/libs/formatRelativeTime";
 import { ChevronDownIcon, FileTextIcon, TrashIcon } from "../icons";
 import { useToast } from "../Toast";
+import EmptyState from "../motion/EmptyState";
 
 export default function CoverLetterList() {
   const { user, loading: authLoading } = useFirebaseUser();
@@ -77,7 +78,11 @@ export default function CoverLetterList() {
 
   if (!letters || letters.length === 0) {
     return (
-      <Message>No cover letters yet — create one above to get started.</Message>
+      <EmptyState
+        className="mt-3"
+        title="No cover letters yet"
+        description="Create one above. It starts from your resume, ready to tailor to the role."
+      />
     );
   }
 

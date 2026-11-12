@@ -8,7 +8,8 @@ import {
   type RoleGapItem,
 } from "@/libs/insights/insightSchema";
 import Button from "../Button";
-import { CheckIcon, PlusIcon, SpinnerIcon } from "../icons";
+import { CheckIcon, PlusIcon } from "../icons";
+import SparkleSpinner from "../motion/SparkleSpinner";
 
 export interface RoleGapProps {
   gap: RoleGapResult | null;
@@ -92,7 +93,7 @@ export default function RoleGap({ gap, pending, onRun }: RoleGapProps) {
           className="self-start"
           disabled={pending || !role.trim()}
           icon={
-            pending ? <SpinnerIcon className="size-4 animate-spin" /> : undefined
+            pending ? <SparkleSpinner /> : undefined
           }
           onClick={() => onRun(role)}
         >

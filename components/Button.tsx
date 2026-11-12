@@ -15,7 +15,7 @@ export interface ButtonProps extends React.ComponentProps<"button"> {
 }
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-md font-bold transition-colors " +
+  "inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors " +
   "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 " +
   "focus-visible:ring-offset-background focus-visible:outline-none " +
   "disabled:pointer-events-none disabled:opacity-50";
@@ -24,7 +24,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   primary:
     "bg-accent text-white hover:bg-accent-hover dark:text-zinc-950",
   secondary:
-    "border border-zinc-200 text-zinc-900 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-900",
+    "border border-zinc-200 text-zinc-900 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800",
   ghost:
     "text-zinc-600 hover:bg-accent-subtle hover:text-accent dark:text-zinc-400",
   soft: "bg-accent-subtle text-accent hover:bg-accent-subtle-hover",
@@ -37,6 +37,17 @@ const SIZES: Record<ButtonSize, string> = {
   md: "px-3 py-2 text-sm",
   lg: "px-4 py-2.5 text-sm",
 };
+
+/** The same classes for an `<a>` or `<Link>` that should look like a button. */
+export function buttonClasses(
+  variant: ButtonVariant = "primary",
+  size: ButtonSize = "md",
+  className?: string,
+) {
+  return [BASE, VARIANTS[variant], SIZES[size], className]
+    .filter(Boolean)
+    .join(" ");
+}
 
 export default function Button({
   variant = "primary",
@@ -51,9 +62,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={[BASE, VARIANTS[variant], SIZES[size], className]
-        .filter(Boolean)
-        .join(" ")}
+      className={buttonClasses(variant, size, className)}
       {...props}
     >
       {icon}

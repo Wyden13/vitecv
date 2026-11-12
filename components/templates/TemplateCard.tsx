@@ -22,7 +22,7 @@ export default function TemplateCard({
   disabled = false,
 }: TemplateCardProps) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-background transition-colors hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700">
+    <div className="flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-background transition-colors hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700">
       <div className="border-b border-zinc-200 bg-zinc-100 p-3 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="overflow-hidden rounded-md shadow-sm">
           <DocumentThumbnail>{preview}</DocumentThumbnail>

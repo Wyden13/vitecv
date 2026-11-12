@@ -10,6 +10,7 @@ import {
 import type { ExtensionTokenInfo } from "@/libs/jobtracker/extensionToken";
 
 import Button from "../Button";
+import SuccessCheck from "../motion/SuccessCheck";
 import { useToast } from "../Toast";
 
 const CARD =
@@ -168,18 +169,21 @@ export default function ExtensionConnect() {
           <p className={`mt-3 ${MUTED}`}>Checking…</p>
         ) : info ? (
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm text-zinc-900 dark:text-zinc-50">
-              <code className="font-mono">{info.prefix}…</code>
-              <p className="text-xs text-zinc-500">
-                Connected{" "}
-                {info.createdAt
-                  ? new Date(info.createdAt).toLocaleDateString()
-                  : "recently"}
-                {" · "}
-                {info.lastUsedAt
-                  ? `last used ${new Date(info.lastUsedAt).toLocaleString()}`
-                  : "not used yet"}
-              </p>
+            <div className="flex items-center gap-3 text-sm text-zinc-900 dark:text-zinc-50">
+              <SuccessCheck className="size-9 shrink-0" label="Connected" />
+              <div>
+                <code className="font-mono">{info.prefix}…</code>
+                <p className="text-xs text-zinc-500">
+                  Connected{" "}
+                  {info.createdAt
+                    ? new Date(info.createdAt).toLocaleDateString()
+                    : "recently"}
+                  {" · "}
+                  {info.lastUsedAt
+                    ? `last used ${new Date(info.lastUsedAt).toLocaleString()}`
+                    : "not used yet"}
+                </p>
+              </div>
             </div>
             <Button
               variant="ghost"

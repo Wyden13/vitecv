@@ -37,8 +37,20 @@ const ebGaramond = EB_Garamond({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
   title: "viteCV",
-  description: "Build, match, and edit your resume.",
+  description:
+    "Build your resume and find the right role. Resume, cover letter, job match and tracker, with one AI assistant.",
+  manifest: "/manifest.webmanifest",
+  openGraph: {
+    title: "viteCV",
+    description:
+      "Resume, cover letter, job match and tracker, with one AI assistant.",
+    siteName: "viteCV",
+    type: "website",
+  },
 };
 
 /**

@@ -41,6 +41,7 @@ import LibrarySection from "./LibrarySection";
 import LibrarySectionRow from "./LibrarySectionRow";
 import Message from "./Message";
 import { sectionIcon } from "./sectionIcons";
+import EmptyState from "../motion/EmptyState";
 
 /**
  * The profile is a section in the nav but not a list of items, so it carries a
@@ -416,10 +417,10 @@ export default function LibraryView() {
         {isProfile ? (
           <LibraryProfileCard />
         ) : selectedItems.length === 0 ? (
-          <Message>
-            Nothing here yet — add your first item and it is ready to drop into
-            any resume.
-          </Message>
+          <EmptyState
+            title="Nothing here yet"
+            description="Add your first item and it is ready to drop into any resume."
+          />
         ) : (
           <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {selectedItems.map((item, index) => (

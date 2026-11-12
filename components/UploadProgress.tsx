@@ -6,6 +6,7 @@ import {
   useContext,
   useState,
 } from "react";
+import SparkleSpinner from "./motion/SparkleSpinner";
 
 export type ProcessingStage =
   | "idle"
@@ -103,7 +104,11 @@ export function UploadProgressBar() {
         />
       </div>
 
-      <p aria-live="polite" className="text-xs text-zinc-500 p-4">
+      <p
+        aria-live="polite"
+        className="inline-flex items-center gap-2 p-4 text-xs text-zinc-500"
+      >
+        {isProcessing ? <SparkleSpinner className="size-3.5 text-accent-alt" /> : null}
         {STAGE_LABELS[stage]}
       </p>
     </div>

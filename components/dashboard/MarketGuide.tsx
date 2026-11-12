@@ -8,9 +8,10 @@ import type { MarketGuidance } from "@/libs/dashboard/intentSchema";
 import { setHandoff } from "@/libs/handoff";
 
 import Button from "../Button";
-import { AlertTriangleIcon, MapPinIcon, SpinnerIcon } from "../icons";
+import { AlertTriangleIcon, MapPinIcon } from "../icons";
 import { Field } from "../resume/fields/Field";
 import { useToast } from "../Toast";
+import SparkleSpinner from "../motion/SparkleSpinner";
 
 function Pills({ title, items }: { title: string; items: string[] }) {
   if (items.length === 0) return null;
@@ -81,7 +82,7 @@ export default function MarketGuide() {
         aim your resume at.
       </p>
 
-      <div className="mt-4 rounded-2xl border border-zinc-200 bg-background p-5 dark:border-zinc-800">
+      <div className="mt-4 rounded-xl border border-zinc-200 bg-background p-5 dark:border-zinc-800">
         <div className="flex flex-wrap items-end gap-3">
           <div className="min-w-56 flex-1">
             <Field
@@ -96,7 +97,7 @@ export default function MarketGuide() {
             disabled={pending || !location.trim()}
             icon={
               pending ? (
-                <SpinnerIcon className="size-4 animate-spin" />
+                <SparkleSpinner />
               ) : (
                 <MapPinIcon className="size-4" />
               )

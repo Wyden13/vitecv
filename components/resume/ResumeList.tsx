@@ -12,6 +12,7 @@ import {
 } from "@/libs/resume/resumeService";
 import { ChevronDownIcon, FileTextIcon, TrashIcon } from "../icons";
 import { useToast } from "../Toast";
+import EmptyState from "../motion/EmptyState";
 
 const STATUS_LABELS = {
   extracted: "Draft",
@@ -85,7 +86,13 @@ export default function ResumeList() {
   }
 
   if (!resumes || resumes.length === 0) {
-    return <Message>No resumes yet — upload one above to get started.</Message>;
+    return (
+      <EmptyState
+        className="mt-3"
+        title="No resumes yet"
+        description="Upload the resume you already have, or start one from scratch above."
+      />
+    );
   }
 
   return (

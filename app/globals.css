@@ -7,14 +7,14 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Sky blue — primary accent / recommended emphasis */
-  --accent: #0A66C2; /* sky-700 */
+  /* Brand blue — primary accent: actions, links, focus, "CV" in the logo */
+  --accent: #0A66C2;
   --accent-hover: #075985; /* sky-800 — solid fills on hover */
   --accent-subtle: #f0f9ff; /* sky-50 */
   --accent-subtle-hover: #e0f2fe; /* sky-100 */
   --accent-border: #bae6fd; /* sky-200 */
 
-  /* Dark orange — secondary accent */
+  /* Burnt orange — AI and highlight: the sparkle, "Recommended" badges */
   --accent-alt: #c2410c;
   --accent-alt-subtle: #fff7ed;
   --accent-alt-subtle-hover: #ffedd5;
@@ -30,6 +30,21 @@
   --accent-warn: #b45309;
   --accent-warn-subtle: #fffbeb;
   --accent-warn-border: #fde68a;
+
+  /* The logo sparkle. Lighter than accent-alt: it only ever sits on the blue
+     tile or as decoration, never as text. */
+  --spark: #ffb86c;
+
+  /* Motion: calm and confident. Durations and easings from the brand kit. */
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-draw: cubic-bezier(0.3, 0, 0.2, 1);
+  --ease-pop: cubic-bezier(0.2, 1.4, 0.4, 1);
+  --ease-loop: cubic-bezier(0.45, 0, 0.25, 1);
+  --motion-fast: 150ms;
+  --motion-base: 220ms;
+  --motion-draw: 450ms;
+  --motion-pop: 350ms;
+  --motion-loop: 1.8s;
 }
 
 @theme inline {
@@ -55,6 +70,8 @@
   --color-accent-warn-subtle: var(--accent-warn-subtle);
   --color-accent-warn-border: var(--accent-warn-border);
 
+  --color-spark: var(--spark);
+
   --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-source-serif);
@@ -64,46 +81,52 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --color-zinc-50: #f8f8f2; /* Dracula foreground */
-  --color-zinc-100: #eaeaf2;
-  --color-zinc-200: #d2d4e4;
-  --color-zinc-300: #b6bad2;
+  /* Charcoal: neutral greys rather than a tinted theme. Overriding Tailwind's
+     zinc scale keeps every existing `dark:bg-zinc-900` / `dark:text-zinc-50`
+     working without touching the components. */
+  --color-zinc-50: #f5f5f5; /* foreground */
+  --color-zinc-100: #e5e5e5;
+  --color-zinc-200: #d4d4d4;
+  --color-zinc-300: #bdbdbd;
 
-  --color-zinc-400: #9ba3c7;
-  --color-zinc-500: #7e88b0;
-  --color-zinc-600: #6272a4; /* Dracula comment — de-emphasised use only */
-  --color-zinc-700: #4a5273;
-  --color-zinc-800: #3b3f52; /* borders */
-  --color-zinc-900: #282a36; /* Dracula background — cards, surfaces */
-  --color-zinc-950: #21222c; /* Dracula darker — page behind cards */
+  --color-zinc-400: #a3a3a3; /* secondary text */
+  --color-zinc-500: #8a8a8a;
+  --color-zinc-600: #737373; /* de-emphasised use only */
+  --color-zinc-700: #4a4a4a;
+  --color-zinc-800: #333333; /* borders */
+  --color-zinc-900: #222222; /* cards, surfaces */
+  --color-zinc-950: #1a1a1a; /* page behind cards */
 
   /* Errors; same trick, covering dark:text-red-400 and dark:border-red-900. */
-  --color-red-400: #ff5555; /* Dracula red */
+  --color-red-400: #ff5555;
   --color-red-900: #5c2b2b;
 
-  --background: #282a36;
-  --foreground: #f8f8f2;
+  --background: #222222;
+  --foreground: #f5f5f5;
 
-  --accent: #8be9fd; /* Dracula cyan */
+  --accent: #54a6d8; /* sky blue */
   /* Dark fills are bright with dark text, so hover dims rather than
      darkens — the same direction as zinc-50 → zinc-200. */
-  --accent-hover: #66d3ee;
-  --accent-subtle: #1e3540;
-  --accent-subtle-hover: #27485a;
-  --accent-border: #3d6e85;
+  --accent-hover: #3e93c8;
+  --accent-subtle: #1f3240;
+  --accent-subtle-hover: #26404f;
+  --accent-border: #2f5670;
 
-  --accent-alt: #ffb86c; /* Dracula orange */
+  /* Status hues stay Dracula: they read well on charcoal. */
+  --accent-alt: #ffb86c;
   --accent-alt-subtle: #3a2e20;
   --accent-alt-subtle-hover: #4a3a28;
   --accent-alt-border: #6b4f33;
 
-  --accent-good: #50fa7b; /* Dracula green */
+  --accent-good: #50fa7b;
   --accent-good-subtle: #1e3a28;
   --accent-good-border: #3d7a52;
 
-  --accent-warn: #f1fa8c; /* Dracula yellow */
+  --accent-warn: #f1fa8c;
   --accent-warn-subtle: #3a3420;
   --accent-warn-border: #6b6333;
+
+  --spark: #ffb86c;
 }
 
 body {
@@ -157,6 +180,180 @@ body {
   margin-bottom: calc((1 - var(--doc-scale)) * -11in);
 }
 
+
+/* ---------------------------------------------------------------------------
+   Motion
+
+   The brand kit's five animations (components/motion/). Every one is a stroke
+   draw-on or the sparkle; nothing bounces except the sparkle pop. Under
+   prefers-reduced-motion each one shows its final frame.
+   --------------------------------------------------------------------------- */
+
+/* Logo reveal: tile settles, the V draws on, the sparkle pops at its tip. */
+.mo-reveal-tile {
+  transform-origin: 256px 256px;
+  animation: mo-tile 280ms var(--ease-out-soft) both;
+}
+.mo-reveal-stroke {
+  stroke-dasharray: 560;
+  stroke-dashoffset: 560;
+  animation: mo-draw 500ms 140ms cubic-bezier(0.5, 0, 0.2, 1) forwards;
+}
+.mo-reveal-spark {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transform: scale(0) rotate(-60deg);
+  animation:
+    mo-pop 380ms 540ms var(--ease-pop) forwards,
+    mo-twinkle 2.4s 1.3s ease-in-out 2;
+}
+
+/* Page loader: the V draws in and out on a loop. */
+.mo-loader-stroke {
+  stroke-dasharray: 560 560;
+  animation: mo-loop-draw var(--motion-loop) var(--ease-loop) infinite;
+}
+.mo-loader-spark {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: mo-loop-spark var(--motion-loop) ease-in-out infinite;
+}
+
+/* AI working: the sparkle turns and breathes. */
+.mo-sparkle-spin {
+  transform-origin: 12px 12px;
+  animation: mo-sparkle 1.2s var(--ease-loop) infinite;
+}
+
+/* Success: ring and tick draw on, then a sparkle lands. */
+.mo-ok-ring {
+  stroke-dasharray: 252;
+  stroke-dashoffset: 252;
+  transform: rotate(-90deg);
+  transform-origin: 48px 48px;
+  animation: mo-draw var(--motion-draw) var(--ease-draw) forwards;
+}
+.mo-ok-tick {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: mo-draw 280ms 380ms var(--ease-draw) forwards;
+}
+.mo-ok-spark {
+  transform-origin: 76px 20px;
+  transform: scale(0);
+  animation: mo-pop 320ms 620ms var(--ease-pop) forwards;
+}
+
+/* Empty state: the page floats while its lines write themselves. */
+.mo-empty-page {
+  animation: mo-float 3.2s ease-in-out infinite;
+}
+.mo-empty-spark {
+  transform-origin: 118px 34px;
+  animation: mo-wink 3.2s ease-in-out infinite;
+}
+.mo-empty-line {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: mo-write 3.2s ease-in-out infinite;
+}
+
+@keyframes mo-tile {
+  from {
+    transform: scale(0.86);
+    opacity: 0;
+  }
+}
+@keyframes mo-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes mo-pop {
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes mo-twinkle {
+  50% {
+    transform: scale(0.86) rotate(20deg);
+  }
+}
+@keyframes mo-loop-draw {
+  0% {
+    stroke-dashoffset: 560;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -560;
+  }
+}
+@keyframes mo-loop-spark {
+  0%,
+  38% {
+    transform: scale(0) rotate(-60deg);
+  }
+  52% {
+    transform: scale(1.1) rotate(0);
+  }
+  66%,
+  82% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0) rotate(60deg);
+  }
+}
+@keyframes mo-sparkle {
+  0% {
+    transform: rotate(0) scale(0.7);
+  }
+  50% {
+    transform: rotate(90deg) scale(1);
+  }
+  100% {
+    transform: rotate(180deg) scale(0.7);
+  }
+}
+@keyframes mo-float {
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes mo-wink {
+  0%,
+  100% {
+    transform: scale(0.8) rotate(0);
+  }
+  50% {
+    transform: scale(1) rotate(45deg);
+  }
+}
+@keyframes mo-write {
+  0% {
+    stroke-dashoffset: 60;
+  }
+  35%,
+  75% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -60;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="mo-"] {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    transform: none !important;
+  }
+  .mo-ok-ring {
+    transform: rotate(-90deg) !important;
+  }
+}
 
 @media print {
   @page {
