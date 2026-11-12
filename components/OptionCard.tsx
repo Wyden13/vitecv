@@ -40,9 +40,9 @@ export default function OptionCard({
   badge,
 }: OptionCardProps) {
   return (
-    <div className={`relative flex flex-col rounded-2xl border bg-background p-6 text-center transition-colors ${CARD_BORDER[tone]}`}>
+    <div className={`relative flex flex-col rounded-xl border bg-background p-6 text-center transition-colors ${CARD_BORDER[tone]}`}>
       {badge ? (
-        <span className="absolute right-3 top-3 rounded-full bg-accent-subtle px-2 py-0.5 text-[11px] font-medium text-accent">
+        <span className="absolute right-3 top-3 rounded-full bg-accent-alt-subtle px-2 py-0.5 text-[11px] font-semibold text-accent-alt">
           {badge}
         </span>
       ) : null}

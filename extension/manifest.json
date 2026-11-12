@@ -3,8 +3,15 @@
   "name": "viteCV Job Saver",
   "version": "0.2.0",
   "description": "Save jobs from career sites and see how your resume matches, in a side panel.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "action": {
-    "default_title": "Open the viteCV panel"
+    "default_title": "Open the viteCV panel",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png" }
   },
   "background": {
     "service_worker": "background.js"

@@ -11,6 +11,7 @@ import AttachmentChips from "../chat/AttachmentChips";
 import Button from "../Button";
 import { ArrowUpIcon, PlusIcon, SpinnerIcon } from "../icons";
 import { useToast } from "../Toast";
+import SparkleSpinner from "../motion/SparkleSpinner";
 
 const PLACEHOLDER =
   "Paste a job posting, or describe what you want to work on…";
@@ -85,7 +86,7 @@ export default function PromptComposer() {
           >
             <span className="flex size-7 items-center justify-center rounded-full bg-accent-subtle text-accent">
               {reading ? (
-                <SpinnerIcon className="size-4 animate-spin" />
+                <SpinnerIcon className="size-4" />
               ) : (
                 <PlusIcon className="size-4" />
               )}
@@ -107,7 +108,7 @@ export default function PromptComposer() {
             disabled={loading || !user || busy || empty}
             iconRight={
               thinking ? (
-                <SpinnerIcon className="size-4 animate-spin" />
+                <SparkleSpinner />
               ) : (
                 <ArrowUpIcon className="size-4" />
               )

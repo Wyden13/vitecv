@@ -66,7 +66,7 @@ export default function ContinueCard() {
         Pick up where you left off
       </h2>
 
-      <div className="mt-3 flex flex-wrap gap-2 rounded-2xl border border-zinc-200 bg-background p-2 dark:border-zinc-800">
+      <div className="mt-3 flex flex-wrap gap-2 rounded-xl border border-zinc-200 bg-background p-2 dark:border-zinc-800">
         {resume && (
           <Link href={`/resume/${resume.id}`} className={ROW}>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent-subtle text-accent">

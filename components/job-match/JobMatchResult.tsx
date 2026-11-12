@@ -13,8 +13,7 @@ import {
   BriefcaseIcon,
   ClockIcon,
   MapPinIcon,
-  SpinnerIcon,
-} from "../icons";
+  } from "../icons";
 import ViewSwitcher from "../ViewSwitcher";
 import ImproveGuideline from "./ImproveGuideline";
 import JobDetail from "./JobDetail";
@@ -22,6 +21,7 @@ import JobMatchAnalysis from "./JobMatchAnalysis";
 import MatchScore from "./MatchScore";
 import TrackJobButton from "./TrackJobButton";
 import { CARD } from "./shared";
+import SparkleSpinner from "../motion/SparkleSpinner";
 
 export interface JobMatchResultProps {
   result: JobMatchPayload | null;
@@ -62,7 +62,7 @@ function JobSummary({ job }: { job: JobFacts }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+      <h2 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
         {job.title ?? "This posting"}
       </h2>
 
@@ -108,7 +108,7 @@ export default function JobMatchResult({
       <div className="w-full">
         <Placeholder>
           <span className="inline-flex items-center gap-2">
-            <SpinnerIcon className="size-4 animate-spin" />
+            <SparkleSpinner />
             Reading the posting and comparing it with your resume…
           </span>
         </Placeholder>

@@ -11,7 +11,7 @@ export default function DashboardHero() {
         viteCV · AI career agent
       </p>
 
-      <h1 className="mx-auto mt-5 max-w-3xl font-serif text-4xl leading-tight tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl dark:text-zinc-50">
+      <h1 className="mx-auto mt-5 max-w-3xl font-serif text-4xl font-semibold leading-tight tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl dark:text-zinc-50">
         Build your resume and find{" "}
         <span className="text-accent">the right role.</span>
       </h1>

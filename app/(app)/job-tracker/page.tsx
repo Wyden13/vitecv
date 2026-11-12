@@ -24,6 +24,7 @@ import type {
   JobApplicationInput,
   JobApplicationStatus,
 } from "@/libs/jobtracker/jobTrackerSchema";
+import EmptyState from "@/components/motion/EmptyState";
 
 type TrackerView = "board" | "table";
 
@@ -277,10 +278,10 @@ function Content({
 
   if (!applications || applications.length === 0) {
     return (
-      <Message>
-        Nothing tracked yet — add an application above, or run a job match and
-        track it from there.
-      </Message>
+      <EmptyState
+        title="Nothing tracked yet"
+        description="Add an application above, save one from the browser extension, or run a job match and track it from there."
+      />
     );
   }
 

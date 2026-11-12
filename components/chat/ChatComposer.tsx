@@ -16,6 +16,7 @@ import { ALLOWED_EXTENSIONS, UPLOAD_HINT } from "@/libs/uploadFile";
 import AttachmentChips from "./AttachmentChips";
 import Button from "../Button";
 import { ArrowUpIcon, PlusIcon, SpinnerIcon } from "../icons";
+import SparkleSpinner from "../motion/SparkleSpinner";
 
 function SubmitRow({
   reading,
@@ -40,7 +41,7 @@ function SubmitRow({
       >
         <span className="flex size-6 items-center justify-center rounded-full bg-accent-subtle text-accent">
           {reading ? (
-            <SpinnerIcon className="size-3.5 animate-spin" />
+            <SpinnerIcon className="size-3.5" />
           ) : (
             <PlusIcon className="size-3.5" />
           )}
@@ -65,7 +66,7 @@ function SubmitRow({
         disabled={busy}
         iconRight={
           pending ? (
-            <SpinnerIcon className="size-4 animate-spin" />
+            <SparkleSpinner />
           ) : (
             <ArrowUpIcon className="size-4" />
           )

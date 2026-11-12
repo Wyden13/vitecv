@@ -8,7 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { CheckIcon, SpinnerIcon, XIcon } from "./icons";
+import { SpinnerIcon, XIcon } from "./icons";
+import SuccessCheck from "./motion/SuccessCheck";
 
 export type ToastVariant = "loading" | "success" | "error";
 
@@ -59,7 +60,7 @@ const VARIANT_ICON_COLOR: Record<ToastVariant, string> = {
 
 function VariantIcon({ variant }: { variant: ToastVariant }) {
   if (variant === "loading") return <SpinnerIcon className="size-4" />;
-  if (variant === "success") return <CheckIcon className="size-4" />;
+  if (variant === "success") return <SuccessCheck className="size-5" label="" />;
   return <XIcon className="size-4" />;
 }
 

@@ -113,7 +113,7 @@ export default function JobDescriptionUpload({
         }`}
       >
         {busy ? (
-          <SpinnerIcon className="size-4 animate-spin" />
+          <SpinnerIcon className="size-4" />
         ) : (
           <UploadIcon className="size-4" />
         )}

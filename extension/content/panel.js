@@ -135,8 +135,8 @@
     :host { all: initial; }
     * { box-sizing: border-box; }
     .vcv {
-      --bg: #ffffff; --surface: #f4f6f8; --border: #e2e6ea; --text: #18181b;
-      --muted: #6b7280; --accent: #0a66c2; --accent-text: #ffffff;
+      --bg: #ffffff; --surface: #fafafa; --border: #e4e4e7; --text: #171717;
+      --muted: #52525b; --accent: #0a66c2; --accent-text: #ffffff;
       --good: #15803d; --good-bg: #dcfce7; --warn: #b45309; --warn-bg: #fef3c7;
       --bad: #b91c1c; --bad-bg: #fee2e2;
       font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -144,8 +144,8 @@
     }
     @media (prefers-color-scheme: dark) {
       .vcv {
-        --bg: #18181b; --surface: #27272a; --border: #3f3f46; --text: #f4f4f5;
-        --muted: #a1a1aa; --accent: #4a9eed; --accent-text: #0b1620;
+        --bg: #222222; --surface: #1a1a1a; --border: #333333; --text: #f5f5f5;
+        --muted: #a3a3a3; --accent: #54a6d8; --accent-text: #1a1a1a;
         --good: #4ade80; --good-bg: #14301f; --warn: #fbbf24; --warn-bg: #3a2c0a;
         --bad: #f87171; --bad-bg: #3b1515;
       }
@@ -172,7 +172,8 @@
       display: flex; align-items: center; gap: 8px; padding: 12px 14px;
       border-bottom: 1px solid var(--border);
     }
-    .brand { font-weight: 700; font-size: 15px; flex: 1; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; letter-spacing: -.015em; flex: 1; }
+    .brand svg { width: 22px; height: 22px; flex-shrink: 0; }
     .brand span { color: var(--accent); }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); }
     .dot.off { background: var(--muted); }
@@ -254,10 +255,24 @@
 
   // --- Rendering -----------------------------------------------------------
 
+  // The viteCV mark (public/brand/mark.svg), drawn in the panel's accent so it
+  // follows light and dark. A static string, never page or user data.
+  const MARK_SVG =
+    '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="144" fill="currentColor"/>' +
+    '<g fill="var(--accent-text)" transform="translate(256 258) scale(0.88) translate(-260 -282.5)">' +
+    '<path d="M149.7 193.3L137.3 170.7Q103.5 198.4 79.3 243.7L209.8 481.8Q288.6 337.2 357.4 186.1L351.6 182.3Q285.7 255.7 226.5 333.4Z"/>' +
+    '<path d="M343.8 200.7Q369.0 144.7 323.3 103.8Q379.3 129.0 420.2 83.3Q395.0 139.3 440.7 180.2Q384.7 155.0 343.8 200.7Z"/></g></svg>';
+
+  function brandMark() {
+    const mark = h("span", { style: "display:flex;color:var(--accent)" });
+    mark.innerHTML = MARK_SVG;
+    return mark;
+  }
+
   function renderHeader() {
     const connected = state.phase === "ready";
     headerEl.replaceChildren(
-      h("div", { class: "brand" }, "vite", h("span", {}, "CV")),
+      h("div", { class: "brand" }, brandMark(), "vite", h("span", {}, "CV")),
       h("span", {
         class: `dot${connected ? "" : " off"}`,
         title: connected ? "Connected" : "Not connected",

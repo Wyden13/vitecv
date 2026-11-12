@@ -6,7 +6,6 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 
 import { matchJob } from "@/actions/insights-action";
 import Button from "@/components/Button";
-import { SpinnerIcon } from "@/components/icons";
 import JobDescriptionUpload from "@/components/job-match/JobDescriptionUpload";
 import JobMatchResult from "@/components/job-match/JobMatchResult";
 import PageShell from "@/components/layouts/PageShell";
@@ -29,6 +28,7 @@ import {
   type ResumeRecord,
   type ResumeSummary,
 } from "@/libs/resume/resumeService";
+import SparkleSpinner from "@/components/motion/SparkleSpinner";
 
 /**
  * Tagged with the resume it came from, so a result can never outlive the pick
@@ -182,8 +182,8 @@ function JobMatchView() {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-wrap items-start gap-6">
           {/*Analyse a job*/}
-          <div className="flex w-full max-w-md flex-col gap-3 rounded-lg border border-zinc-200 bg-background p-4 lg:w-1/3 dark:border-zinc-800">
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+          <div className="flex w-full max-w-md flex-col gap-3 rounded-xl border border-zinc-200 bg-background p-4 lg:w-1/3 dark:border-zinc-800">
+            <h2 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
               Analyse a Job
             </h2>
 
@@ -223,7 +223,7 @@ function JobMatchView() {
               onClick={() => void runMatch()}
               icon={
                 pending ? (
-                  <SpinnerIcon className="size-4 animate-spin" />
+                  <SparkleSpinner />
                 ) : undefined
               }
             >
